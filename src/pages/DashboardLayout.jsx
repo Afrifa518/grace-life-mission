@@ -7,7 +7,7 @@ import SermonsManagement from '@/pages/dashboard/SermonsManagement';
 import EventsManagement from '@/pages/dashboard/EventsManagement';
 import GalleryManagement from '@/pages/dashboard/GalleryManagement';
 
-const Dashboard = () => {
+const DashboardLayouts = () => {
   return (
     <>
       <Helmet>
@@ -27,4 +27,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardLayouts;

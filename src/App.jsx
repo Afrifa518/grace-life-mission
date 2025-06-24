@@ -12,7 +12,7 @@ import Ministries from '@/pages/Ministries';
 import Donations from '@/pages/Donations';
 import Contact from '@/pages/Contact.jsx';
 import Gallery from '@/pages/Gallery.jsx';
-import Dashboard from '@/pages/Dashboard';
+import DashboardLayouts from '@/pages/DashboardLayout';
 import Login from '@/pages/Login';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
@@ -44,7 +44,7 @@ const AppContent = () => {
             path="/dashboard/*" 
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <DashboardLayouts />
               </ProtectedRoute>
             } 
           />
