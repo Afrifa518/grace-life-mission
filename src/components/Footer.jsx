@@ -117,13 +117,13 @@ const Footer = () => {
               <div className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-gray-300">123 Faith Street</p>
-                  <p className="text-gray-300">Grace City, GC 12345</p>
+                  <p className="text-gray-300">Pomakrom, Oppsite VRA Quaters</p>
+                  <p className="text-gray-300">Techiman BE, Ghana</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <p className="text-gray-300">+1 (555) 123-4567</p>
+                <p className="text-gray-300">+1 *** *** ****</p>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-blue-600 flex-shrink-0" />
@@ -134,8 +134,8 @@ const Footer = () => {
                   <Clock className="w-4 h-4 text-blue-600" />
                   <span className="font-medium text-sm">Service Times</span>
                 </div>
-                <p className="text-sm text-gray-300">Sunday: 9:00 AM & 11:00 AM</p>
-                <p className="text-sm text-gray-300">Wednesday: 7:00 PM</p>
+                <p className="text-sm text-gray-300">Sunday: 8:00 AM & 11:00 AM</p>
+                <p className="text-sm text-gray-300">Friday: 7:00 PM</p>
               </div>
             </div>
           </div>
@@ -150,9 +150,8 @@ const Footer = () => {
               © 2024 GraceLife Mission International. All rights reserved.
             </p>
             <div className="flex items-center space-x-1 text-sm text-gray-400">
-              <span>Made with</span>
-              <Heart className="w-4 h-4 text-red-500" />
-              <span>for God's glory</span>
+              <span>Built By</span>
+              <span>GraceLife Media Team</span>
             </div>
           </div>
         </div>
