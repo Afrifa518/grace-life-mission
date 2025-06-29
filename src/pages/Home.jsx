@@ -67,75 +67,28 @@ const Home = () => {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 hero-gradient"></div>
-        <div className="absolute inset-0 bg-black/20"></div>
-        
+      <section className="relative min-h-[90vh] flex items-center bg-black overflow-hidden">
         {/* Background Image */}
-        <div className="absolute inset-0">
-          <img  
-            className="w-full h-full object-cover opacity-30" 
-            alt="Church congregation worshipping together"
-           src="https://images.unsplash.com/photo-1673650030849-9ba2a05a00cb" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
-          >
-            <motion.h1 
-              className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white text-shadow"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              Welcome to
-              <span className="block gradient-text">GraceLife Mission International</span>
-            </motion.h1>
-            
-            <motion.p 
-              className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              A Christ-centered community where faith grows, hearts heal, and lives are transformed through God's amazing grace.
-            </motion.p>
-
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            >
-              <Link to="/about">
-                <Button className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                  Join Our Family
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              
-              <Button 
-                onClick={handleWatchLive}
-                variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg font-semibold rounded-full backdrop-blur-sm bg-white/10 shadow-xl hover:shadow-2xl transition-all duration-300 group"
-              >
-                <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
-                Watch Live
-              </Button>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Floating Elements */}
-        <div className="absolute top-20 left-10 animate-float">
-          <div className="w-20 h-20 bg-white/10 rounded-full backdrop-blur-sm"></div>
-        </div>
-        <div className="absolute bottom-32 right-16 animate-float" style={{ animationDelay: '2s' }}>
-          <div className="w-16 h-16 bg-white/10 rounded-full backdrop-blur-sm"></div>
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80" alt="Church" className="absolute inset-0 w-full h-full object-cover object-center z-0" />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/60 z-10" />
+        <div className="relative z-20 max-w-3xl pl-8 pr-4 py-32 flex flex-col items-start">
+          <div className="mb-6 text-white/80 font-medium text-lg flex items-center gap-3">
+            <span className="inline-block w-10 h-0.5 bg-white/40 rounded-full mr-2" />
+            Christ-centered community
+          </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white drop-shadow-lg leading-tight mb-6">
+            Welcome to<br />GraceLife Mission International
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-xl drop-shadow">
+            A Christ-centered community where faith grows, hearts heal, and lives are transformed through God's amazing grace.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 items-start mb-10">
+            <a href="#about" className="inline-flex items-center bg-white text-black font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:bg-gray-100 transition-all">
+              Join Our Family
+              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </a>
+          </div>
         </div>
       </section>
 
