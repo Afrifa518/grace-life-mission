@@ -39,7 +39,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex-shrink-0 flex items-center" style={{ minWidth: 80 }}>
           <Link to="/" className="flex items-center space-x-2">
-            <span className={`text-2xl font-extrabold ${isOnWhiteBackground ? 'text-black' : 'text-white'} tracking-tight`}>GL</span>
+            <span className={`text-2xl font-extrabold ${isOnWhiteBackground ? 'text-black' : 'text-white'} tracking-tight`}>GMI</span>
           </Link>
         </div>
         {/* Nav links */}
