@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import hero_img from '../images/hero.jpg'
 
 const Home = () => {
   const { toast } = useToast();
@@ -69,13 +70,13 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center bg-black overflow-hidden">
         {/* Background Image */}
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80" alt="Church" className="absolute inset-0 w-full h-full object-cover object-center z-0" />
+        <img src={hero_img} className="absolute inset-0 w-full h-full object-cover object-center z-0" />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black/60 z-10" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-r from-green-900/90 via-green-700/40 to-transparent" />
         <div className="relative z-20 max-w-3xl pl-8 pr-4 py-32 flex flex-col items-start">
           <div className="mb-6 text-white/80 font-medium text-lg flex items-center gap-3">
             <span className="inline-block w-10 h-0.5 bg-white/40 rounded-full mr-2" />
-            Christ-centered community
+            Making Diciples Of The Christ
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold text-white drop-shadow-lg leading-tight mb-6">
             Welcome to<br />GraceLife Mission International
