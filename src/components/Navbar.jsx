@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import logo from '../../GMI-LOGOpp.png'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +40,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex-shrink-0 flex items-center" style={{ minWidth: 80 }}>
           <Link to="/" className="flex items-center space-x-2">
-            <span className={`text-2xl font-extrabold ${isOnWhiteBackground ? 'text-black' : 'text-white'} tracking-tight`}>GMI</span>
+            <img src={logo} alt="GraceLife Mission Logo" className="h-10 w-auto object-contain" />
           </Link>
         </div>
         {/* Nav links */}
