@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Filter } from 'lucide-react';
-import { categories } from '@/data/galleryData';
+import { categories as staticCategories } from '@/data/galleryData';
 
-const CategoryFilter = ({ selectedCategory, setSelectedCategory }) => {
+const CategoryFilter = ({ categories, selectedCategory, setSelectedCategory }) => {
+  const list = Array.isArray(categories) && categories.length > 0 ? categories : staticCategories;
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -15,7 +16,7 @@ const CategoryFilter = ({ selectedCategory, setSelectedCategory }) => {
         <Filter className="w-5 h-5 text-gray-600" />
         <span className="text-gray-700 font-medium">Filter by:</span>
       </div>
-      {categories.map((category) => (
+      {list.map((category) => (
         <button
           key={category}
           onClick={() => setSelectedCategory(category)}

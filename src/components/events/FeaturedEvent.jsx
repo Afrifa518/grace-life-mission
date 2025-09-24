@@ -63,7 +63,7 @@ const FeaturedEvent = ({ event, onRSVP }) => {
               <img  
                 className="w-full h-80 object-cover rounded-xl shadow-lg" 
                 alt={event.title}
-               src="https://images.unsplash.com/photo-1640478650646-6797ed4acaca" />
+                src={event.imageUrl || 'https://images.unsplash.com/photo-1640478650646-6797ed4acaca'} />
             </div>
           </div>
         </motion.div>

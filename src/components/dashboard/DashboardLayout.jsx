@@ -29,10 +29,8 @@ const DashboardLayout = ({ children }) => {
     { icon: Mic, label: 'Sermons', path: '/dashboard/sermons' },
     { icon: Calendar, label: 'Events', path: '/dashboard/events' },
     { icon: Image, label: 'Gallery', path: '/dashboard/gallery' },
-    { icon: Users, label: 'Members', path: '/dashboard/members' },
-    { icon: BarChart3, label: 'Analytics', path: '/dashboard/analytics' },
-    { icon: FileText, label: 'Reports', path: '/dashboard/reports' },
-    { icon: Settings, label: 'Settings', path: '/dashboard/settings' }
+    { icon: Users, label: 'Ministries', path: '/dashboard/ministries' },
+    { icon: Users, label: 'Leadership', path: '/dashboard/leaders' },
   ];
 
   return (
@@ -88,8 +86,8 @@ const DashboardLayout = ({ children }) => {
             {user && (
               <div className="flex items-center space-x-4">
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                  <p className="text-xs text-black font-bold text-center mt-4 mb-4">{user.email}</p>
+                  <p className="text-sm font-medium text-gray-900">{user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email}</p>
+                  <p className="text-xs text-black font-bold text-center mt-4 mb-4">{user?.email}</p>
                 </div>
               </div>
             )}

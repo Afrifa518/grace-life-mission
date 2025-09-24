@@ -6,42 +6,76 @@ import { useToast } from '@/components/ui/use-toast';
 import DataTable from '@/components/dashboard/DataTable';
 import { eventCategories } from '@/data/eventsData';
 import { supabase } from '@/lib/supabase';
+import Modal from '@/components/dashboard/Modal';
+import EventForm from '@/components/dashboard/EventForm';
 
 const EventsManagement = () => {
   const { toast } = useToast();
   const [events, setEvents] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
+
+  // server-mode state
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [loading, setLoading] = useState(false);
+
+  const fetchEvents = async () => {
+    if (!supabase) return;
+    setLoading(true);
+    try {
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      let query = supabase
+        .from('events')
+        .select('*', { count: 'exact' })
+        .order('date', { ascending: false });
+
+      if (search) {
+        query = query.or(`title.ilike.%${search}%,location.ilike.%${search}%`);
+      }
+
+      if (filter && filter !== 'all') {
+        if (filter === 'published' || filter === 'draft') {
+          query = query.eq('status', filter);
+        } else {
+          query = query.eq('category', filter);
+        }
+      }
+
+      const { data, error, count } = await query.range(from, to);
+      if (error) throw error;
+      setEvents(data || []);
+      setTotal(count || 0);
+    } catch (err) {
+      toast({ title: 'Error fetching events', description: err.message, variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      if (!supabase) return;
-      const { data, error } = await supabase.from('events').select('*').order('date', { ascending: false });
-      if (error) {
-        toast({ title: "Error fetching events", description: error.message, variant: 'destructive' });
-      } else {
-        setEvents(data);
-      }
-    };
     fetchEvents();
-  }, [toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, pageSize, search, filter]);
 
   const handleEdit = (event) => {
-    toast({
-      title: "🚧 Edit Feature Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
-    });
+    setEditing(event);
+    setOpen(true);
   };
 
   const handleDelete = async (eventToDelete) => {
     if (!supabase) return;
     const { error } = await supabase.from('events').delete().eq('id', eventToDelete.id);
     if (error) {
-      toast({ title: "Error deleting event", description: error.message, variant: 'destructive' });
+      toast({ title: 'Error deleting event', description: error.message, variant: 'destructive' });
     } else {
-      setEvents(events.filter(e => e.id !== eventToDelete.id));
-      toast({
-        title: "Event Deleted",
-        description: `"${eventToDelete.title}" has been removed.`,
-      });
+      toast({ title: 'Event Deleted', description: `"${eventToDelete.title}" has been removed.` });
+      fetchEvents();
     }
   };
 
@@ -53,10 +87,8 @@ const EventsManagement = () => {
   };
 
   const handleAddNew = () => {
-    toast({
-      title: "🚧 Add Event Feature Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
-    });
+    setEditing(null);
+    setOpen(true);
   };
 
   const columns = [
@@ -146,7 +178,25 @@ const EventsManagement = () => {
         onView={handleView}
         searchPlaceholder="Search events..."
         filterOptions={filterOptions}
+        serverMode
+        total={total}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        searchTerm={search}
+        onSearchChange={(v) => { setPage(1); setSearch(v); }}
+        filterValue={filter}
+        onFilterChange={(v) => { setPage(1); setFilter(v); }}
+        isLoading={loading}
       />
+
+      <Modal open={open} title={editing ? 'Edit Event' : 'Create Event'} onClose={() => setOpen(false)}>
+        <EventForm
+          initialData={editing}
+          onCancel={() => setOpen(false)}
+          onSaved={async () => { setOpen(false); await fetchEvents(); }}
+        />
+      </Modal>
     </div>
   );
 };

@@ -6,6 +6,8 @@ import DashboardOverview from '@/pages/dashboard/DashboardOverview';
 import SermonsManagement from '@/pages/dashboard/SermonsManagement';
 import EventsManagement from '@/pages/dashboard/EventsManagement';
 import GalleryManagement from '@/pages/dashboard/GalleryManagement';
+import MinistriesManagement from '@/pages/dashboard/MinistriesManagement';
+import LeadersManagement from '@/pages/dashboard/LeadersManagement';
 
 const DashboardLayouts = () => {
   return (
@@ -21,6 +23,8 @@ const DashboardLayouts = () => {
           <Route path="/sermons" element={<SermonsManagement />} />
           <Route path="/events" element={<EventsManagement />} />
           <Route path="/gallery" element={<GalleryManagement />} />
+          <Route path="/ministries" element={<MinistriesManagement />} />
+          <Route path="/leaders" element={<LeadersManagement />} />
         </Routes>
       </DashboardLayout>
     </>

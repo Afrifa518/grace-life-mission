@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
@@ -6,11 +6,13 @@ import EventsHero from '@/components/events/EventsHero';
 import EventsFilter from '@/components/events/EventsFilter';
 import FeaturedEvent from '@/components/events/FeaturedEvent';
 import EventsGrid from '@/components/events/EventsGrid';
-import { eventsData, eventCategories } from '@/data/eventsData';
+import { supabase } from '@/lib/supabase';
 
 const Events = () => {
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleRSVP = (eventTitle) => {
     toast({
@@ -19,17 +21,38 @@ const Events = () => {
     });
   };
 
-  const categories = ['All', ...eventCategories];
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!supabase) return;
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .order('date', { ascending: true });
+        if (error) throw error;
+        setEvents(data || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
 
-  const filteredEvents = eventsData.filter(event => 
-    selectedCategory === 'All' || event.category === selectedCategory
-  );
+  const categories = useMemo(() => {
+    const unique = Array.from(new Set((events || []).map(e => e.category).filter(Boolean)));
+    return ['All', ...unique];
+  }, [events]);
 
-  const upcomingEvents = filteredEvents.filter(event => 
-    new Date(event.date) >= new Date() && event.status === 'published'
+  const filteredEvents = (events || []).filter(event => 
+    (selectedCategory === 'All' || event.category === selectedCategory)
+    && event.status === 'published'
+    && new Date(event.date) >= new Date()
   ).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  const featuredEvent = upcomingEvents.find(event => event.category === 'Special') || upcomingEvents[0];
+  const featuredEvent = filteredEvents.find(event => event.category === 'Special') || filteredEvents[0];
 
   const getCategoryColor = (category) => {
     const colors = {
@@ -63,11 +86,13 @@ const Events = () => {
         <FeaturedEvent event={featuredEvent} onRSVP={handleRSVP} />
       )}
       
-      <EventsGrid 
-        events={upcomingEvents.filter(event => event.id !== featuredEvent?.id)} 
-        onRSVP={handleRSVP} 
-        getCategoryColor={getCategoryColor} 
-      />
+      {!loading && (
+        <EventsGrid 
+          events={filteredEvents.filter(event => event.id !== featuredEvent?.id)} 
+          onRSVP={handleRSVP} 
+          getCategoryColor={getCategoryColor} 
+        />
+      )}
     </>
   );
 };

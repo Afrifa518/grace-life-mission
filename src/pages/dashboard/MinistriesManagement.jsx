@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Image, Heart, Star, Calendar } from 'lucide-react';
+import { Plus, Users, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import DataTable from '@/components/dashboard/DataTable';
-import { categories } from '@/data/galleryData';
 import { supabase } from '@/lib/supabase';
 import Modal from '@/components/dashboard/Modal';
-import GalleryForm from '@/components/dashboard/GalleryForm';
+import MinistryForm from '@/components/dashboard/MinistryForm';
 
-const GalleryManagement = () => {
+const MinistriesManagement = () => {
   const { toast } = useToast();
-  const [gallery, setGallery] = useState([]);
+  const [ministries, setMinistries] = useState([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
@@ -23,7 +22,7 @@ const GalleryManagement = () => {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(false);
 
-  const fetchGallery = async () => {
+  const fetchMinistries = async () => {
     if (!supabase) return;
     setLoading(true);
     try {
@@ -31,55 +30,52 @@ const GalleryManagement = () => {
       const to = from + pageSize - 1;
 
       let query = supabase
-        .from('gallery')
+        .from('ministries')
         .select('*', { count: 'exact' })
-        .order('date', { ascending: false });
+        .order('order', { ascending: true })
+        .order('title', { ascending: true });
 
       if (search) {
-        query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+        query = query.or(`title.ilike.%${search}%,leader.ilike.%${search}%`);
       }
 
       if (filter && filter !== 'all') {
-        if (filter === 'photo' || filter === 'story') {
-          query = query.eq('type', filter);
-        } else {
-          query = query.eq('category', filter);
-        }
+        query = query.eq('status', filter);
       }
 
       const { data, error, count } = await query.range(from, to);
       if (error) throw error;
-      setGallery(data || []);
+      setMinistries(data || []);
       setTotal(count || 0);
     } catch (err) {
-      toast({ title: 'Error fetching gallery', description: err.message, variant: 'destructive' });
+      toast({ title: 'Error fetching ministries', description: err.message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchGallery();
+    fetchMinistries();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize, search, filter]);
 
-  const handleEdit = (item) => {
-    setEditing(item);
+  const handleEdit = (ministry) => {
+    setEditing(ministry);
     setOpen(true);
   };
 
-  const handleDelete = async (itemToDelete) => {
+  const handleDelete = async (ministryToDelete) => {
     if (!supabase) return;
-    const { error } = await supabase.from('gallery').delete().eq('id', itemToDelete.id);
+    const { error } = await supabase.from('ministries').delete().eq('id', ministryToDelete.id);
     if (error) {
-      toast({ title: 'Error deleting item', description: error.message, variant: 'destructive' });
+      toast({ title: 'Error deleting ministry', description: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Gallery Item Deleted', description: `"${itemToDelete.title}" has been removed.` });
-      fetchGallery();
+      toast({ title: 'Ministry Deleted', description: `"${ministryToDelete.title}" has been removed.` });
+      fetchMinistries();
     }
   };
 
-  const handleView = (item) => {
+  const handleView = (ministry) => {
     toast({
       title: '🚧 View Feature Coming Soon!',
       description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
@@ -94,84 +90,78 @@ const GalleryManagement = () => {
   const columns = [
     {
       key: 'title',
-      label: 'Title',
+      label: 'Ministry',
       render: (value, item) => (
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-            <Image className="w-6 h-6 text-gray-400" />
+          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+            <Users className="w-5 h-5 text-gray-500" />
           </div>
           <div>
             <p className="font-medium text-gray-900">{value}</p>
-            <p className="text-xs text-gray-500">{item.type}</p>
+            <p className="text-xs text-gray-500">{item.subtitle}</p>
           </div>
         </div>
       )
     },
     {
-      key: 'category',
-      label: 'Category',
+      key: 'leader',
+      label: 'Leader',
       render: (value) => (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+        <span className="text-sm text-gray-600">{value || '—'}</span>
+      )
+    },
+    {
+      key: 'meetingTime',
+      label: 'Meets',
+      render: (value) => (
+        <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <Calendar className="w-4 h-4 text-gray-400" />
+          <span>{value || '—'}</span>
+        </div>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (value) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          value === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+        }`}>
           {value}
         </span>
       )
     },
-    {
-      key: 'date',
-      label: 'Date',
-      render: (value) => (
-        <div className="flex items-center space-x-2">
-          <Calendar className="w-4 h-4 text-gray-400" />
-          <span className="text-sm text-gray-600">{value ? new Date(value).toLocaleDateString() : 'N/A'}</span>
-        </div>
-      )
-    },
-    {
-      key: 'type',
-      label: 'Type',
-      render: (value) => (
-        <div className="flex items-center space-x-2">
-          {value === 'story' ? (
-            <Heart className="w-4 h-4 text-purple-600" />
-          ) : (
-            <Star className="w-4 h-4 text-green-600" />
-          )}
-          <span className="text-sm text-gray-600 capitalize">{value}</span>
-        </div>
-      )
-    }
   ];
 
   const filterOptions = [
-    { value: 'photo', label: 'Photos' },
-    { value: 'story', label: 'Stories' },
-    ...categories.slice(1).map(cat => ({ value: cat, label: cat }))
+    { value: 'published', label: 'Published' },
+    { value: 'draft', label: 'Draft' },
   ];
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Gallery Management</h2>
-          <p className="text-gray-600 mt-2">Manage photos, testimonies, and visual content.</p>
+          <h2 className="text-3xl font-bold text-gray-900">Ministries Management</h2>
+          <p className="text-gray-600 mt-2">Create and manage church ministries.</p>
         </div>
         <Button 
           onClick={handleAddNew}
           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Upload Content
+          Add New Ministry
         </Button>
       </div>
 
       <DataTable
-        data={gallery}
+        data={ministries}
         columns={columns}
-        title="Gallery Items"
+        title="All Ministries"
         onEdit={handleEdit}
         onDelete={handleDelete}
         onView={handleView}
-        searchPlaceholder="Search gallery items..."
+        searchPlaceholder="Search ministries..."
         filterOptions={filterOptions}
         serverMode
         total={total}
@@ -185,15 +175,15 @@ const GalleryManagement = () => {
         isLoading={loading}
       />
 
-      <Modal open={open} title={editing ? 'Edit Gallery Item' : 'Upload Content'} onClose={() => setOpen(false)}>
-        <GalleryForm
+      <Modal open={open} title={editing ? 'Edit Ministry' : 'Add Ministry'} onClose={() => setOpen(false)}>
+        <MinistryForm
           initialData={editing}
           onCancel={() => setOpen(false)}
-          onSaved={async () => { setOpen(false); await fetchGallery(); }}
+          onSaved={async () => { setOpen(false); await fetchMinistries(); }}
         />
       </Modal>
     </div>
   );
 };
 
-export default GalleryManagement;
+export default MinistriesManagement; 

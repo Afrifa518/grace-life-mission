@@ -1,17 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import CategoryFilter from '@/components/gallery/CategoryFilter';
 import GalleryGrid from '@/components/gallery/GalleryGrid';
 import Lightbox from '@/components/gallery/Lightbox';
-import { galleryItems } from '@/data/galleryData';
+import { supabase } from '@/lib/supabase';
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const filteredItems = galleryItems.filter(item => 
+  useEffect(() => {
+    const fetchGallery = async () => {
+      if (!supabase) return;
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('gallery')
+          .select('*')
+          .order('date', { ascending: false });
+        if (error) throw error;
+        setItems(data || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchGallery();
+  }, []);
+
+  const categories = useMemo(() => {
+    const unique = Array.from(new Set((items || []).map(i => i.category).filter(Boolean)));
+    return ['All', ...unique];
+  }, [items]);
+
+  const filteredItems = (items || []).filter(item => 
     selectedCategory === 'All' || item.category === selectedCategory
   );
 
@@ -21,13 +48,11 @@ const Gallery = () => {
   const navigateImage = (direction) => {
     const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
     let newIndex;
-    
     if (direction === 'next') {
       newIndex = currentIndex === filteredItems.length - 1 ? 0 : currentIndex + 1;
     } else {
       newIndex = currentIndex === 0 ? filteredItems.length - 1 : currentIndex - 1;
     }
-    
     setSelectedImage(filteredItems[newIndex]);
   };
 
@@ -62,7 +87,7 @@ const Gallery = () => {
 
       <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <CategoryFilter selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+          <CategoryFilter categories={categories} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
         </div>
       </section>
 
@@ -82,15 +107,24 @@ const Gallery = () => {
               Every picture tells a story of God's faithfulness and the love shared within our church community.
             </p>
           </motion.div>
-          <GalleryGrid items={filteredItems} onImageClick={openLightbox} />
-          {filteredItems.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-12"
-            >
-              <p className="text-gray-500 text-lg">No items found in this category.</p>
+
+          {loading ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
+              <p className="text-gray-500">Loading gallery...</p>
             </motion.div>
+          ) : (
+            <>
+              <GalleryGrid items={filteredItems} onImageClick={openLightbox} />
+              {filteredItems.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-12"
+                >
+                  <p className="text-gray-500 text-lg">No items found in this category.</p>
+                </motion.div>
+              )}
+            </>
           )}
         </div>
       </section>

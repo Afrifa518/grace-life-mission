@@ -6,29 +6,66 @@ import { useToast } from '@/components/ui/use-toast';
 import DataTable from '@/components/dashboard/DataTable';
 import { sermonCategories } from '@/data/sermonsData';
 import { supabase } from '@/lib/supabase';
+import Modal from '@/components/dashboard/Modal';
+import SermonForm from '@/components/dashboard/SermonForm';
 
 const SermonsManagement = () => {
   const { toast } = useToast();
   const [sermons, setSermons] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
+
+  // server-mode state
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [loading, setLoading] = useState(false);
+
+  const fetchSermons = async () => {
+    if (!supabase) return;
+    setLoading(true);
+    try {
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      let query = supabase
+        .from('sermons')
+        .select('*', { count: 'exact' })
+        .order('date', { ascending: false });
+
+      if (search) {
+        query = query.or(`title.ilike.%${search}%,speaker.ilike.%${search}%`);
+      }
+
+      if (filter && filter !== 'all') {
+        if (filter === 'published' || filter === 'draft') {
+          query = query.eq('status', filter);
+        } else {
+          query = query.eq('category', filter);
+        }
+      }
+
+      const { data, error, count } = await query.range(from, to);
+      if (error) throw error;
+      setSermons(data || []);
+      setTotal(count || 0);
+    } catch (err) {
+      toast({ title: 'Error fetching sermons', description: err.message, variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSermons = async () => {
-      if (!supabase) return;
-      const { data, error } = await supabase.from('sermons').select('*').order('date', { ascending: false });
-      if (error) {
-        toast({ title: "Error fetching sermons", description: error.message, variant: 'destructive' });
-      } else {
-        setSermons(data);
-      }
-    };
     fetchSermons();
-  }, [toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, pageSize, search, filter]);
   
   const handleEdit = (sermon) => {
-    toast({
-      title: "🚧 Edit Feature Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
-    });
+    setEditing(sermon);
+    setOpen(true);
   };
 
   const handleDelete = async (sermonToDelete) => {
@@ -36,28 +73,23 @@ const SermonsManagement = () => {
     const { error } = await supabase.from('sermons').delete().eq('id', sermonToDelete.id);
     
     if (error) {
-      toast({ title: "Error deleting sermon", description: error.message, variant: 'destructive' });
+      toast({ title: 'Error deleting sermon', description: error.message, variant: 'destructive' });
     } else {
-      setSermons(sermons.filter(s => s.id !== sermonToDelete.id));
-      toast({
-        title: "Sermon Deleted",
-        description: `"${sermonToDelete.title}" has been removed.`,
-      });
+      toast({ title: 'Sermon Deleted', description: `"${sermonToDelete.title}" has been removed.` });
+      fetchSermons();
     }
   };
 
   const handleView = (sermon) => {
     toast({
-      title: "🚧 View Feature Coming Soon!",
+      title: '🚧 View Feature Coming Soon!',
       description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
     });
   };
 
   const handleAddNew = () => {
-    toast({
-      title: "🚧 Add Sermon Feature Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
-    });
+    setEditing(null);
+    setOpen(true);
   };
 
   const columns = [
@@ -151,7 +183,25 @@ const SermonsManagement = () => {
         onView={handleView}
         searchPlaceholder="Search sermons..."
         filterOptions={filterOptions}
+        serverMode
+        total={total}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        searchTerm={search}
+        onSearchChange={(v) => { setPage(1); setSearch(v); }}
+        filterValue={filter}
+        onFilterChange={(v) => { setPage(1); setFilter(v); }}
+        isLoading={loading}
       />
+
+      <Modal open={open} title={editing ? 'Edit Sermon' : 'Add Sermon'} onClose={() => setOpen(false)}>
+        <SermonForm
+          initialData={editing}
+          onCancel={() => setOpen(false)}
+          onSaved={async () => { setOpen(false); await fetchSermons(); }}
+        />
+      </Modal>
     </div>
   );
 };

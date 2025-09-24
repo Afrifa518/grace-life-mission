@@ -36,7 +36,7 @@ const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
                 <img  
                   className="w-full h-full object-cover" 
                   alt={event.title}
-                 src="https://images.unsplash.com/photo-1595872018818-97555653a011" />
+                  src={event.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011'} />
                 <div className="absolute top-4 left-4">
                   <span className={`bg-gradient-to-r ${getCategoryColor(event.category)} text-white px-3 py-1 rounded-full text-xs font-medium`}>
                     {event.category}

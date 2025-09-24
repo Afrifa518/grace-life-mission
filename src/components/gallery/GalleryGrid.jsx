@@ -20,7 +20,7 @@ const GalleryGrid = ({ items, onImageClick }) => {
               <img  
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
                 alt={item.title}
-               src="https://images.unsplash.com/photo-1595872018818-97555653a011" />
+                src={item.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011'} />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
               
               <div className="absolute top-4 left-4">
