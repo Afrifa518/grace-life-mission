@@ -49,8 +49,8 @@ const Events = () => {
   const filteredEvents = (events || []).filter(event => 
     (selectedCategory === 'All' || event.category === selectedCategory)
     && event.status === 'published'
-    && new Date(event.date) >= new Date()
-  ).sort((a, b) => new Date(a.date) - new Date(b.date));
+    && new Date((event.schedule && event.schedule[0]?.date) || event.date) >= new Date()
+  ).sort((a, b) => new Date((a.schedule && a.schedule[0]?.date) || a.date) - new Date((b.schedule && b.schedule[0]?.date) || b.date));
 
   const featuredEvent = filteredEvents.find(event => event.category === 'Special') || filteredEvents[0];
 

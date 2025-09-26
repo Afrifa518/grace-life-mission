@@ -4,7 +4,6 @@ import { Plus, Image, Heart, Star, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import DataTable from '@/components/dashboard/DataTable';
-import { categories } from '@/data/galleryData';
 import { supabase } from '@/lib/supabase';
 import Modal from '@/components/dashboard/Modal';
 import GalleryForm from '@/components/dashboard/GalleryForm';
@@ -14,6 +13,7 @@ const GalleryManagement = () => {
   const [gallery, setGallery] = useState([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [viewing, setViewing] = useState(null);
 
   // server-mode state
   const [page, setPage] = useState(1);
@@ -40,10 +40,8 @@ const GalleryManagement = () => {
       }
 
       if (filter && filter !== 'all') {
-        if (filter === 'photo' || filter === 'story') {
+        if (filter === 'photo' || filter === 'story' || filter === 'video') {
           query = query.eq('type', filter);
-        } else {
-          query = query.eq('category', filter);
         }
       }
 
@@ -80,10 +78,7 @@ const GalleryManagement = () => {
   };
 
   const handleView = (item) => {
-    toast({
-      title: '🚧 View Feature Coming Soon!',
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
-    });
+    setViewing(item);
   };
 
   const handleAddNew = () => {
@@ -108,15 +103,6 @@ const GalleryManagement = () => {
       )
     },
     {
-      key: 'category',
-      label: 'Category',
-      render: (value) => (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-          {value}
-        </span>
-      )
-    },
-    {
       key: 'date',
       label: 'Date',
       render: (value) => (
@@ -131,7 +117,7 @@ const GalleryManagement = () => {
       label: 'Type',
       render: (value) => (
         <div className="flex items-center space-x-2">
-          {value === 'story' ? (
+          {value === 'video' ? (
             <Heart className="w-4 h-4 text-purple-600" />
           ) : (
             <Star className="w-4 h-4 text-green-600" />
@@ -144,9 +130,21 @@ const GalleryManagement = () => {
 
   const filterOptions = [
     { value: 'photo', label: 'Photos' },
-    { value: 'story', label: 'Stories' },
-    ...categories.slice(1).map(cat => ({ value: cat, label: cat }))
+    { value: 'video', label: 'Videos' },
   ];
+
+  const getYouTubeId = (url) => {
+    try {
+      const u = new URL(url);
+      if (u.hostname.includes('youtu.be')) return u.pathname.replace('/', '');
+      if (u.hostname.includes('youtube.com')) {
+        if (u.pathname.startsWith('/embed/')) return u.pathname.split('/').pop();
+        const id = u.searchParams.get('v');
+        if (id) return id;
+      }
+    } catch {}
+    return '';
+  };
 
   return (
     <div className="space-y-8">
@@ -192,6 +190,62 @@ const GalleryManagement = () => {
           onSaved={async () => { setOpen(false); await fetchGallery(); }}
         />
       </Modal>
+
+      {viewing && (
+        <Modal open={true} title={viewing.title} onClose={() => setViewing(null)}>
+          <div className="space-y-4">
+            <div className="relative w-full h-56 rounded-xl overflow-hidden bg-gray-100">
+              {viewing.type === 'video' && viewing.youtubeUrl ? (
+                <iframe
+                  className="w-full h-full"
+                  src={(() => { const id = getYouTubeId(viewing.youtubeUrl); return id ? `https://www.youtube.com/embed/${id}` : viewing.youtubeUrl; })()}
+                  title={viewing.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : (
+                <img
+                  src={viewing.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011'}
+                  alt={viewing.title}
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div>
+                <span className="font-medium text-gray-900">Type:</span>
+                <div className="capitalize">{viewing.type || '—'}</div>
+              </div>
+              <div>
+                <span className="font-medium text-gray-900">Date:</span>
+                <div>{viewing.date ? new Date(viewing.date).toLocaleDateString() : '—'}</div>
+              </div>
+              <div>
+                <span className="font-medium text-gray-900">Status:</span>
+                <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  viewing.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>{viewing.status}</div>
+              </div>
+              {viewing.type === 'video' && viewing.youtubeUrl && (
+                <div>
+                  <span className="font-medium text-gray-900">YouTube:</span>
+                  <div>
+                    <a href={viewing.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Open link</a>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div>
+              <span className="font-medium text-gray-900">Description:</span>
+              <p className="mt-1 text-gray-700 whitespace-pre-line">{viewing.description || '—'}</p>
+            </div>
+            <div className="flex justify-end">
+              <Button variant="outline" onClick={() => setViewing(null)}>Close</Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

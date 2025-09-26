@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
-import { categories } from '@/data/galleryData';
 import { uploadToStorage } from '@/lib/utils';
 
 const defaultItem = {
   title: '',
-  category: categories[1] || 'Worship',
   date: '',
   description: '',
   type: 'photo',
-  testimony: '',
   status: 'published',
   imageUrl: '',
+  youtubeUrl: '',
 };
 
 const GalleryForm = ({ initialData, onCancel, onSaved }) => {
@@ -27,13 +25,12 @@ const GalleryForm = ({ initialData, onCancel, onSaved }) => {
     if (initialData) {
       setForm({
         title: initialData.title || '',
-        category: initialData.category || (categories[1] || 'Worship'),
         date: initialData.date ? initialData.date.slice(0, 10) : '',
         description: initialData.description || '',
         type: initialData.type || 'photo',
-        testimony: initialData.testimony || '',
         status: initialData.status || 'published',
         imageUrl: initialData.imageUrl || '',
+        youtubeUrl: initialData.youtubeUrl || '',
       });
     }
   }, [initialData]);
@@ -53,6 +50,18 @@ const GalleryForm = ({ initialData, onCancel, onSaved }) => {
     setLoading(true);
     try {
       const payload = { ...form };
+
+      if (payload.type === 'video') {
+        // For video, image is optional; ensure youtubeUrl is provided
+        if (!payload.youtubeUrl) {
+          throw new Error('Please provide a YouTube URL for video items.');
+        }
+      } else {
+        // For photo, ensure an image (existing or newly uploaded)
+        if (!payload.imageUrl && !imageFile) {
+          throw new Error('Please upload an image for photo items.');
+        }
+      }
 
       if (imageFile) {
         const { publicUrl } = await uploadToStorage({ bucket: 'gallery', file: imageFile, folder: 'images' });
@@ -88,18 +97,10 @@ const GalleryForm = ({ initialData, onCancel, onSaved }) => {
           <input type="date" name="date" value={form.date} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-          <select name="category" value={form.category} onChange={updateField} className="w-full px-3 py-2 border rounded-lg">
-            {categories.slice(1).map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        </div>
-        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
           <select name="type" value={form.type} onChange={updateField} className="w-full px-3 py-2 border rounded-lg">
             <option value="photo">Photo</option>
-            <option value="story">Story</option>
+            <option value="video">YouTube Video</option>
           </select>
         </div>
         <div>
@@ -109,21 +110,23 @@ const GalleryForm = ({ initialData, onCancel, onSaved }) => {
             <option value="draft">Draft</option>
           </select>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Image (optional)</label>
-          <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full" />
-        </div>
+        {form.type === 'photo' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Image (optional)</label>
+            <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full" />
+          </div>
+        )}
+        {form.type === 'video' && (
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">YouTube URL</label>
+            <input name="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." value={form.youtubeUrl} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
+          </div>
+        )}
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
         <textarea name="description" value={form.description} onChange={updateField} rows={4} className="w-full px-3 py-2 border rounded-lg" />
       </div>
-      {form.type === 'story' && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Testimony</label>
-          <textarea name="testimony" value={form.testimony} onChange={updateField} rows={4} className="w-full px-3 py-2 border rounded-lg" />
-        </div>
-      )}
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>

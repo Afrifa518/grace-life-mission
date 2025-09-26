@@ -10,7 +10,6 @@ import { supabase } from '@/lib/supabase';
 const Sermons = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [sermons, setSermons] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -34,28 +33,29 @@ const Sermons = () => {
     fetchSermons();
   }, [toast]);
 
-  const handlePlay = (title) => {
-    toast({
-      title: "�� Audio/Video Player Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
-    });
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return '';
+    try {
+      const u = new URL(url);
+      if (u.hostname.includes('youtu.be')) {
+        const id = u.pathname.replace('/', '');
+        return `https://www.youtube.com/embed/${id}`;
+      }
+      if (u.hostname.includes('youtube.com')) {
+        const id = u.searchParams.get('v');
+        if (id) return `https://www.youtube.com/embed/${id}`;
+        // handle /embed/{id} already
+        if (u.pathname.startsWith('/embed/')) return url;
+      }
+    } catch {}
+    return '';
   };
-
-  const handleDownload = (title) => {
-    toast({
-      title: "🚧 Download Feature Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
-    });
-  };
-
-  const categories = ['All', 'Faith', 'Hope', 'Love', 'Discipleship', 'Prayer', 'Worship'];
 
   const filteredSermons = sermons.filter(sermon => {
     const title = (sermon.title || '').toLowerCase();
     const speaker = (sermon.speaker || '').toLowerCase();
     const matchesSearch = title.includes(searchTerm.toLowerCase()) || speaker.includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || sermon.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
 
   return (
@@ -111,20 +111,6 @@ const Sermons = () => {
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-
-            {/* Category Filter */}
-            <div className="flex items-center space-x-2">
-              <Filter className="w-5 h-5 text-gray-600" />
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
-            </div>
           </motion.div>
         </div>
       </section>
@@ -165,40 +151,32 @@ const Sermons = () => {
                 ) : (
                   <p className="text-gray-600 mb-6">Check back soon for our latest message.</p>
                 )}
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button 
-                    onClick={() => filteredSermons[0] && handlePlay(filteredSermons[0].title)}
-                    disabled={!filteredSermons[0]}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    <Play className="w-5 h-5 mr-2" />
-                    Play Now
-                  </Button>
-                  <Button 
-                    onClick={() => filteredSermons[0] && handleDownload(filteredSermons[0].title)}
-                    disabled={!filteredSermons[0]}
-                    variant="outline" 
-                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
-                  >
-                    <Download className="w-5 h-5 mr-2" />
-                    Download
-                  </Button>
-                </div>
+                {filteredSermons[0]?.youtubeUrl && (
+                  <a href={filteredSermons[0].youtubeUrl} target="_blank" rel="noopener noreferrer">
+                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300">
+                      Watch on YouTube
+                    </Button>
+                  </a>
+                )}
               </div>
               <div className="relative">
-                <img  
-                  className="w-full h-80 object-cover rounded-xl shadow-lg" 
-                  alt={filteredSermons[0]?.title || 'Sermon placeholder'}
-                  src={filteredSermons[0]?.imageUrl || 'https://images.unsplash.com/photo-1573604253901-67bdb250d078'} />
-                <div className="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center">
-                  <button 
-                    onClick={() => filteredSermons[0] && handlePlay(filteredSermons[0].title)}
-                    disabled={!filteredSermons[0]}
-                    className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-300 group disabled:opacity-50"
-                  >
-                    <Play className="w-8 h-8 text-blue-600 ml-1 group-hover:scale-110 transition-transform" />
-                  </button>
-                </div>
+                {filteredSermons[0]?.youtubeUrl ? (
+                  <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg">
+                    <iframe
+                      className="w-full h-full"
+                      src={getYouTubeEmbedUrl(filteredSermons[0].youtubeUrl)}
+                      title={filteredSermons[0].title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : (
+                  <img  
+                    className="w-full h-80 object-cover rounded-xl shadow-lg" 
+                    alt={filteredSermons[0]?.title || 'Sermon placeholder'}
+                    src={filteredSermons[0]?.imageUrl || 'https://images.unsplash.com/photo-1573604253901-67bdb250d078'} />
+                )}
               </div>
             </div>
           </motion.div>
@@ -252,14 +230,18 @@ const Sermons = () => {
                           className="w-full h-full object-cover" 
                           alt={sermon.title}
                           src={sermon.imageUrl || 'https://images.unsplash.com/photo-1607354365933-44c35c62aeab'} />
-                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-                          <button 
-                            onClick={() => handlePlay(sermon.title)}
-                            className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-300 group"
-                          >
-                            <Play className="w-6 h-6 text-blue-600 ml-1 group-hover:scale-110 transition-transform" />
-                          </button>
-                        </div>
+                        {sermon.youtubeUrl && (
+                          <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+                            <a 
+                              href={sermon.youtubeUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-300 group"
+                            >
+                              <Play className="w-6 h-6 text-blue-600 ml-1 group-hover:scale-110 transition-transform" />
+                            </a>
+                          </div>
+                        )}
                         <div className="absolute top-4 left-4">
                           <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium">
                             {sermon.category || 'Sermon'}
@@ -288,22 +270,14 @@ const Sermons = () => {
                         </p>
                         
                         <div className="flex items-center space-x-3">
-                          <Button 
-                            onClick={() => handlePlay(sermon.title)}
-                            size="sm" 
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                          >
-                            <Play className="w-4 h-4 mr-2" />
-                            Play
-                          </Button>
-                          <Button 
-                            onClick={() => handleDownload(sermon.title)}
-                            size="sm" 
-                            variant="outline" 
-                            className="border-gray-300 text-gray-600 hover:bg-gray-50"
-                          >
-                            <Download className="w-4 h-4" />
-                          </Button>
+                          {sermon.youtubeUrl && (
+                            <a href={sermon.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+                              <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                                <Play className="w-4 h-4 mr-2" />
+                                Watch on YouTube
+                              </Button>
+                            </a>
+                          )}
                         </div>
                       </div>
                     </motion.div>
@@ -314,37 +288,6 @@ const Sermons = () => {
           )}
         </div>
       </section>
-
-      {/* Call to Action */}
-      {/* <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
-            <h2 className="text-4xl md:text-5xl font-display font-bold">
-              Never Miss a Message
-            </h2>
-            <p className="text-xl text-white/90 leading-relaxed">
-              Subscribe to our podcast or visit us in person to experience the power of God's Word in your life.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300">
-                Subscribe to Podcast
-              </Button>
-              <Button 
-                variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 text-lg font-semibold rounded-full backdrop-blur-sm bg-white/10 shadow-xl hover:shadow-2xl transition-all duration-300"
-              >
-                Visit This Sunday
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </section> */}
     </>
   );
 };

@@ -23,19 +23,32 @@ const FeaturedEvent = ({ event, onRSVP }) => {
                 {event.title}
               </h2>
               <div className="space-y-3 text-gray-600 mb-6">
-                <div className="flex items-center space-x-3">
-                  <Calendar className="w-5 h-5 text-blue-600" />
-                  <span>{new Date(event.date).toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Clock className="w-5 h-5 text-blue-600" />
-                  <span>{event.time}</span>
-                </div>
+                {Array.isArray(event.schedule) && event.schedule.length > 0 ? (
+                  <div className="space-y-2">
+                    {event.schedule.map((s, i) => (
+                      <div key={i} className="flex items-center space-x-3">
+                        <Calendar className="w-5 h-5 text-blue-600" />
+                        <span>{s.date ? new Date(s.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '—'}{s.time ? ` · ${s.time}` : ''}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center space-x-3">
+                      <Calendar className="w-5 h-5 text-blue-600" />
+                      <span>{new Date(event.date).toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Clock className="w-5 h-5 text-blue-600" />
+                      <span>{event.time}</span>
+                    </div>
+                  </>
+                )}
                 <div className="flex items-center space-x-3">
                   <MapPin className="w-5 h-5 text-blue-600" />
                   <span>{event.location}</span>

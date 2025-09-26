@@ -58,10 +58,23 @@ const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
                 </h3>
                 
                 <div className="space-y-2 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <Clock className="w-4 h-4" />
-                    <span>{event.time}</span>
-                  </div>
+                  {Array.isArray(event.schedule) && event.schedule.length > 0 ? (
+                    <div className="space-y-1">
+                      {event.schedule.map((s, i) => (
+                        <div key={i} className="flex items-center space-x-2">
+                          <Calendar className="w-4 h-4" />
+                          <span>{s.date ? new Date(s.date).toLocaleDateString() : '—'}{s.time ? ` · ${s.time}` : ''}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center space-x-2">
+                        <Clock className="w-4 h-4" />
+                        <span>{event.time}</span>
+                      </div>
+                    </>
+                  )}
                   <div className="flex items-center space-x-2">
                     <MapPin className="w-4 h-4" />
                     <span>{event.location}</span>

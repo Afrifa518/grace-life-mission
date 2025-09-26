@@ -13,9 +13,9 @@ const defaultEvent = {
   description: '',
   category: eventCategories[0],
   recurring: '',
-  capacity: 0,
   status: 'draft',
   imageUrl: '',
+  schedule: [],
 };
 
 const EventForm = ({ initialData, onCancel, onSaved }) => {
@@ -27,6 +27,11 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
 
   useEffect(() => {
     if (initialData) {
+      const initialSchedule = Array.isArray(initialData.schedule) && initialData.schedule.length > 0
+        ? initialData.schedule
+        : (initialData.date || initialData.time)
+          ? [{ date: initialData.date ? initialData.date.slice(0, 10) : '', time: initialData.time || '' }]
+          : [];
       setForm({
         title: initialData.title || '',
         date: initialData.date ? initialData.date.slice(0, 10) : '',
@@ -35,9 +40,9 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
         description: initialData.description || '',
         category: initialData.category || eventCategories[0],
         recurring: initialData.recurring || '',
-        capacity: initialData.capacity || 0,
         status: initialData.status || 'draft',
         imageUrl: initialData.imageUrl || '',
+        schedule: initialSchedule,
       });
     }
   }, [initialData]);
@@ -45,6 +50,26 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
   const updateField = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const updateSchedule = (index, key, value) => {
+    setForm(prev => {
+      const next = [...(prev.schedule || [])];
+      next[index] = { ...next[index], [key]: value };
+      return { ...prev, schedule: next };
+    });
+  };
+
+  const addScheduleItem = () => {
+    setForm(prev => ({ ...prev, schedule: [ ...(prev.schedule || []), { date: '', time: '' } ] }));
+  };
+
+  const removeScheduleItem = (index) => {
+    setForm(prev => {
+      const next = [...(prev.schedule || [])];
+      next.splice(index, 1);
+      return { ...prev, schedule: next };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -58,10 +83,23 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
     try {
       const payload = { ...form };
 
+      // Normalize schedule: remove empty entries
+      const cleanedSchedule = (payload.schedule || []).filter(s => (s.date && s.time));
+      payload.schedule = cleanedSchedule;
+
+      // Mirror first schedule to legacy date/time for compatibility
+      if (cleanedSchedule.length > 0) {
+        payload.date = cleanedSchedule[0].date;
+        payload.time = cleanedSchedule[0].time;
+      }
+
       if (imageFile) {
         const { publicUrl } = await uploadToStorage({ bucket: 'events', file: imageFile, folder: 'images' });
         payload.imageUrl = publicUrl;
       }
+
+      // Ensure capacity is not sent (removed field)
+      delete payload.capacity;
 
       if (isEdit) {
         const { error } = await supabase.from('events').update(payload).eq('id', initialData.id);
@@ -88,14 +126,6 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
           <input name="title" value={form.title} onChange={updateField} required className="w-full px-3 py-2 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-          <input type="date" name="date" value={form.date} onChange={updateField} required className="w-full px-3 py-2 border rounded-lg" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
-          <input name="time" value={form.time} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
-        </div>
-        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
           <input name="location" value={form.location} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
         </div>
@@ -112,10 +142,6 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
           <input name="recurring" placeholder="e.g. Weekly, Monthly" value={form.recurring} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Capacity</label>
-          <input type="number" name="capacity" value={form.capacity} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
-        </div>
-        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
           <select name="status" value={form.status} onChange={updateField} className="w-full px-3 py-2 border rounded-lg">
             <option value="draft">Draft</option>
@@ -127,6 +153,29 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
           <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full" />
         </div>
       </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Schedule (one or more days)</label>
+        <div className="space-y-3">
+          {(form.schedule || []).map((slot, idx) => (
+            <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Date</label>
+                <input type="date" value={slot.date} onChange={(e) => updateSchedule(idx, 'date', e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Time</label>
+                <input value={slot.time} onChange={(e) => updateSchedule(idx, 'time', e.target.value)} placeholder="e.g. 10:00 AM - 12:00 PM" className="w-full px-3 py-2 border rounded-lg" />
+              </div>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" onClick={() => removeScheduleItem(idx)}>Remove</Button>
+              </div>
+            </div>
+          ))}
+          <Button type="button" variant="outline" onClick={addScheduleItem}>Add Day</Button>
+        </div>
+      </div>
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
         <textarea name="description" value={form.description} onChange={updateField} rows={4} className="w-full px-3 py-2 border rounded-lg" />

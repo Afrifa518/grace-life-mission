@@ -2,14 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
-import CategoryFilter from '@/components/gallery/CategoryFilter';
 import GalleryGrid from '@/components/gallery/GalleryGrid';
 import Lightbox from '@/components/gallery/Lightbox';
 import { supabase } from '@/lib/supabase';
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +18,7 @@ const Gallery = () => {
       try {
         const { data, error } = await supabase
           .from('gallery')
-          .select('*')
+          .select('id,title,date,description,type,status,imageUrl,youtubeUrl,created_at')
           .order('date', { ascending: false });
         if (error) throw error;
         setItems(data || []);
@@ -33,27 +31,18 @@ const Gallery = () => {
     fetchGallery();
   }, []);
 
-  const categories = useMemo(() => {
-    const unique = Array.from(new Set((items || []).map(i => i.category).filter(Boolean)));
-    return ['All', ...unique];
-  }, [items]);
-
-  const filteredItems = (items || []).filter(item => 
-    selectedCategory === 'All' || item.category === selectedCategory
-  );
-
   const openLightbox = (item) => setSelectedImage(item);
   const closeLightbox = () => setSelectedImage(null);
 
   const navigateImage = (direction) => {
-    const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
+    const currentIndex = items.findIndex(item => item.id === selectedImage.id);
     let newIndex;
     if (direction === 'next') {
-      newIndex = currentIndex === filteredItems.length - 1 ? 0 : currentIndex + 1;
+      newIndex = currentIndex === items.length - 1 ? 0 : currentIndex + 1;
     } else {
-      newIndex = currentIndex === 0 ? filteredItems.length - 1 : currentIndex - 1;
+      newIndex = currentIndex === 0 ? items.length - 1 : currentIndex - 1;
     }
-    setSelectedImage(filteredItems[newIndex]);
+    setSelectedImage(items[newIndex]);
   };
 
   return (
@@ -85,12 +74,6 @@ const Gallery = () => {
         </div>
       </section>
 
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <CategoryFilter categories={categories} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
-        </div>
-      </section>
-
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -114,14 +97,14 @@ const Gallery = () => {
             </motion.div>
           ) : (
             <>
-              <GalleryGrid items={filteredItems} onImageClick={openLightbox} />
-              {filteredItems.length === 0 && (
+              <GalleryGrid items={items} onImageClick={openLightbox} />
+              {items.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="text-center py-12"
                 >
-                  <p className="text-gray-500 text-lg">No items found in this category.</p>
+                  <p className="text-gray-500 text-lg">No items found.</p>
                 </motion.div>
               )}
             </>
@@ -131,7 +114,7 @@ const Gallery = () => {
       
       <Lightbox selectedImage={selectedImage} onClose={closeLightbox} onNavigate={navigateImage} />
 
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="py-20 bg-gradient-to-r from-blue-600 to purple-600 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

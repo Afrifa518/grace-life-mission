@@ -14,6 +14,7 @@ const EventsManagement = () => {
   const [events, setEvents] = useState([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [viewing, setViewing] = useState(null);
 
   // server-mode state
   const [page, setPage] = useState(1);
@@ -70,20 +71,26 @@ const EventsManagement = () => {
 
   const handleDelete = async (eventToDelete) => {
     if (!supabase) return;
-    const { error } = await supabase.from('events').delete().eq('id', eventToDelete.id);
-    if (error) {
-      toast({ title: 'Error deleting event', description: error.message, variant: 'destructive' });
-    } else {
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', eventToDelete.id)
+        .select('id')
+        .single();
+
+      if (error) throw error;
+      if (!data) throw new Error('Delete did not affect any rows. Check RLS policies and ID.');
+
       toast({ title: 'Event Deleted', description: `"${eventToDelete.title}" has been removed.` });
       fetchEvents();
+    } catch (err) {
+      toast({ title: 'Error deleting event', description: err.message, variant: 'destructive' });
     }
   };
 
   const handleView = (event) => {
-    toast({
-      title: "🚧 View Feature Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
-    });
+    setViewing(event);
   };
 
   const handleAddNew = () => {
@@ -104,11 +111,11 @@ const EventsManagement = () => {
     {
       key: 'date',
       label: 'Date',
-      render: (value) => (
+      render: (value, item) => (
         <div className="flex items-center space-x-2">
           <Calendar className="w-4 h-4 text-gray-400" />
           <span className="text-sm text-gray-600">
-            {new Date(value).toLocaleDateString()}
+            {item.schedule?.length ? new Date(item.schedule[0].date).toLocaleDateString() : new Date(value).toLocaleDateString()}
           </span>
         </div>
       )
@@ -197,6 +204,59 @@ const EventsManagement = () => {
           onSaved={async () => { setOpen(false); await fetchEvents(); }}
         />
       </Modal>
+
+      {viewing && (
+        <Modal open={true} title={viewing.title} onClose={() => setViewing(null)}>
+          <div className="space-y-4">
+            <div className="relative w-full h-56 rounded-xl overflow-hidden bg-gray-100">
+              <img
+                src={viewing.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011'}
+                alt={viewing.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div>
+                <span className="font-medium text-gray-900">Schedule:</span>
+                <div className="mt-1 space-y-1">
+                  {(viewing.schedule && viewing.schedule.length ? viewing.schedule : [{ date: viewing.date, time: viewing.time }]).map((s, i) => (
+                    <div key={i}>{s.date ? new Date(s.date).toLocaleDateString() : '—'}{s.time ? ` · ${s.time}` : ''}</div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <span className="font-medium text-gray-900">Location:</span>
+                <div>{viewing.location || '—'}</div>
+              </div>
+              <div>
+                <span className="font-medium text-gray-900">Category:</span>
+                <div>{viewing.category || '—'}</div>
+              </div>
+              <div>
+                <span className="font-medium text-gray-900">Recurring:</span>
+                <div>{viewing.recurring || '—'}</div>
+              </div>
+              <div>
+                <span className="font-medium text-gray-900">Status:</span>
+                <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  viewing.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>{viewing.status}</div>
+              </div>
+              <div>
+                <span className="font-medium text-gray-900">Created:</span>
+                <div>{viewing.created_at ? new Date(viewing.created_at).toLocaleString() : '—'}</div>
+              </div>
+            </div>
+            <div>
+              <span className="font-medium text-gray-900">Description:</span>
+              <p className="mt-1 text-gray-700 whitespace-pre-line">{viewing.description || '—'}</p>
+            </div>
+            <div className="flex justify-end">
+              <Button variant="outline" onClick={() => setViewing(null)}>Close</Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

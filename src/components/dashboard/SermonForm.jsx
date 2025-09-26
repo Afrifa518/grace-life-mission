@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
-import { sermonCategories } from '@/data/sermonsData';
 import { uploadToStorage } from '@/lib/utils';
 
 const defaultSermon = {
@@ -10,10 +9,9 @@ const defaultSermon = {
   speaker: '',
   date: '',
   duration: '',
-  category: sermonCategories[0],
   description: '',
   status: 'draft',
-  audioUrl: '',
+  youtubeUrl: '',
   imageUrl: '',
 };
 
@@ -21,7 +19,6 @@ const SermonForm = ({ initialData, onCancel, onSaved }) => {
   const isEdit = !!initialData?.id;
   const [form, setForm] = useState(defaultSermon);
   const [loading, setLoading] = useState(false);
-  const [audioFile, setAudioFile] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const { toast } = useToast();
 
@@ -32,10 +29,9 @@ const SermonForm = ({ initialData, onCancel, onSaved }) => {
         speaker: initialData.speaker || '',
         date: initialData.date ? initialData.date.slice(0, 10) : '',
         duration: initialData.duration || '',
-        category: initialData.category || sermonCategories[0],
         description: initialData.description || '',
         status: initialData.status || 'draft',
-        audioUrl: initialData.audioUrl || '',
+        youtubeUrl: initialData.youtubeUrl || initialData.audioUrl || '',
         imageUrl: initialData.imageUrl || '',
       });
     }
@@ -58,15 +54,12 @@ const SermonForm = ({ initialData, onCancel, onSaved }) => {
     try {
       const payload = { ...form };
 
-      // Upload files if provided
-      if (audioFile) {
-        const { publicUrl } = await uploadToStorage({ bucket: 'sermons', file: audioFile, folder: 'audio' });
-        payload.audioUrl = publicUrl;
-      }
       if (imageFile) {
         const { publicUrl } = await uploadToStorage({ bucket: 'sermons', file: imageFile, folder: 'images' });
         payload.imageUrl = publicUrl;
       }
+
+      delete payload.audioUrl;
 
       if (isEdit) {
         const { error } = await supabase
@@ -110,14 +103,6 @@ const SermonForm = ({ initialData, onCancel, onSaved }) => {
           <input name="duration" placeholder="e.g. 40 min" value={form.duration} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-          <select name="category" value={form.category} onChange={updateField} className="w-full px-3 py-2 border rounded-lg">
-            {sermonCategories.map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        </div>
-        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
           <select name="status" value={form.status} onChange={updateField} className="w-full px-3 py-2 border rounded-lg">
             <option value="draft">Draft</option>
@@ -125,8 +110,8 @@ const SermonForm = ({ initialData, onCancel, onSaved }) => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Audio (optional)</label>
-          <input type="file" accept="audio/*" onChange={(e) => setAudioFile(e.target.files?.[0] || null)} className="w-full" />
+          <label className="block text-sm font-medium text-gray-700 mb-2">YouTube URL</label>
+          <input name="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." value={form.youtubeUrl} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image (optional)</label>

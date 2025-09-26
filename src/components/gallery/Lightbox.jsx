@@ -2,7 +2,24 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
+const getYouTubeId = (url) => {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('youtu.be')) return u.pathname.replace('/', '');
+    if (u.hostname.includes('youtube.com')) {
+      if (u.pathname.startsWith('/embed/')) return u.pathname.split('/').pop();
+      const id = u.searchParams.get('v');
+      if (id) return id;
+    }
+  } catch {}
+  return '';
+};
+
 const Lightbox = ({ selectedImage, onClose, onNavigate }) => {
+  const isVideo = selectedImage?.type === 'video' && selectedImage?.youtubeUrl;
+  const ytId = isVideo ? getYouTubeId(selectedImage.youtubeUrl) : '';
+  const embed = isVideo && ytId ? `https://www.youtube.com/embed/${ytId}` : '';
+
   return (
     <AnimatePresence>
       {selectedImage && (
@@ -43,26 +60,28 @@ const Lightbox = ({ selectedImage, onClose, onNavigate }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2">
               <div className="relative h-96 lg:h-auto">
-                <img  
-                  className="w-full h-full object-cover" 
-                  alt={selectedImage.title}
-                 src="https://images.unsplash.com/photo-1595872018818-97555653a011" />
+                {isVideo && embed ? (
+                  <iframe
+                    className="w-full h-full"
+                    src={embed}
+                    title={selectedImage.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                ) : (
+                  <img  
+                    className="w-full h-full object-cover" 
+                    alt={selectedImage.title}
+                    src={selectedImage.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011'} />
+                )}
               </div>
               <div className="p-8">
                 <div className="flex items-center space-x-3 mb-4">
-                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {selectedImage.category}
-                  </span>
                   <span className="text-gray-500 text-sm">{selectedImage.date}</span>
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">{selectedImage.title}</h2>
                 <p className="text-gray-600 leading-relaxed mb-6">{selectedImage.description}</p>
-                {selectedImage.type === 'story' && selectedImage.testimony && (
-                  <div className="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-600">
-                    <h3 className="font-semibold text-blue-900 mb-3">Testimony</h3>
-                    <p className="text-blue-800 leading-relaxed italic">"{selectedImage.testimony}"</p>
-                  </div>
-                )}
               </div>
             </div>
           </motion.div>
