@@ -78,14 +78,10 @@ const MinistriesManagement = () => {
   const handleView = (ministry) => {
     toast({
       title: '🚧 View Feature Coming Soon!',
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
+      description: "Still working on Feature",
     });
   };
 
-  const handleAddNew = () => {
-    setEditing(null);
-    setOpen(true);
-  };
 
   const columns = [
     {

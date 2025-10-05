@@ -14,9 +14,11 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
 const Donations = () => {
   const { toast } = useToast();
+  const { images } = useSiteConfigContext();
   const [selectedAmount, setSelectedAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
   const [donationType, setDonationType] = useState('tithe');
@@ -34,7 +36,7 @@ const Donations = () => {
 
     toast({
       title: "🚧 Payment Processing Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
+      description: "Still working on Feature",
     });
   };
 
@@ -107,7 +109,7 @@ const Donations = () => {
           <img  
             className="w-full h-full object-cover opacity-20" 
             alt="Hands giving offering in church service"
-           src="https://images.unsplash.com/photo-1662045468936-47364448771e" />
+           src={images?.donationsHeroUrl || 'https://images.unsplash.com/photo-1662045468936-47364448771e'} />
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

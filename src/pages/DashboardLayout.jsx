@@ -8,6 +8,7 @@ import EventsManagement from '@/pages/dashboard/EventsManagement';
 import GalleryManagement from '@/pages/dashboard/GalleryManagement';
 import MinistriesManagement from '@/pages/dashboard/MinistriesManagement';
 import LeadersManagement from '@/pages/dashboard/LeadersManagement';
+import SiteImages from '@/pages/dashboard/SiteImages';
 
 const DashboardLayouts = () => {
   return (
@@ -25,6 +26,7 @@ const DashboardLayouts = () => {
           <Route path="/gallery" element={<GalleryManagement />} />
           <Route path="/ministries" element={<MinistriesManagement />} />
           <Route path="/leaders" element={<LeadersManagement />} />
+          <Route path="/site-images" element={<SiteImages />} />
         </Routes>
       </DashboardLayout>
     </>

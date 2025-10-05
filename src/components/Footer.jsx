@@ -14,8 +14,10 @@ import {
   Clock,
   Calendar
 } from 'lucide-react';
+import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
 const Footer = () => {
+  const { images } = useSiteConfigContext();
   const quickLinks = [
     { name: 'About Us', path: '/about' },
     { name: 'Sermons', path: '/sermons' },
@@ -40,7 +42,12 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="relative overflow-hidden bg-gray-900 text-white">
+      {/* Background image */}
+      <div className="absolute inset-0 pointer-events-none opacity-20">
+        <img src={images?.footerBackgroundUrl || '/sunday.jpeg'} alt="" aria-hidden="true" className="w-full h-full object-cover" />
+      </div>
+      <div className="relative z-10">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -123,7 +130,8 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <p className="text-gray-300">+1 *** *** ****</p>
+                <p className="text-gray-300">+233505983499</p>
+                <p className="text-gray-300">+233244892719</p>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-blue-600 flex-shrink-0" />
@@ -147,7 +155,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm text-center md:text-left">
-              © 2024 GraceLife Mission International. All rights reserved.
+              © 2025 GraceLife Mission International. All rights reserved.
             </p>
             <div className="flex items-center space-x-1 text-sm text-gray-400">
               <span>Built By</span>
@@ -155,6 +163,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );

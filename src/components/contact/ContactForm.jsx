@@ -38,7 +38,7 @@ const ContactForm = () => {
 
     toast({
       title: "🚧 Contact Form Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
+      description: "Still working on Feature",
     });
   };
 

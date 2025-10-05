@@ -15,11 +15,12 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import hero_img from '../images/hero.jpg'
 import { supabase } from '@/lib/supabase';
+import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
 const Home = () => {
   const { toast } = useToast();
+  const { images } = useSiteConfigContext();
   const [galleryPreview, setGalleryPreview] = React.useState([]);
   React.useEffect(() => {
     const fetchPreview = async () => {
@@ -90,7 +91,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center bg-black overflow-hidden">
         {/* Background Image */}
-        <img src={hero_img} className="absolute inset-0 w-full h-full object-cover object-center z-0" />
+        <img src={images?.homeHeroUrl || '/sunday.jpeg'} alt="Home hero" className="absolute inset-0 w-full h-full object-cover object-center z-0" />
         {/* Overlay */}
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-green-900/90 via-green-700/40 to-transparent" />
         <div className="relative z-20 max-w-3xl pl-8 pr-4 py-32 flex flex-col items-start">
@@ -157,7 +158,7 @@ const Home = () => {
                 <img  
                   className="w-full h-96 object-cover" 
                   alt="Church Service"
-                 src="/sunday.jpeg" /> 
+                 src={images?.homeWelcomeUrl || '/sunday.jpeg'} /> 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 <div className="absolute bottom-6 left-6 text-white">
                   <h3 className="text-xl font-semibold mb-2">Sunday Worship</h3>

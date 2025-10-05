@@ -6,8 +6,10 @@ import ContactInfoGrid from '@/components/contact/ContactInfoGrid';
 import ContactForm from '@/components/contact/ContactForm';
 import MapAndHours from '@/components/contact/MapAndHours';
 import StaffDirectory from '@/components/contact/StaffDirectory';
+import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
 const Contact = () => {
+  const { images } = useSiteConfigContext();
   return (
     <>
       <Helmet>
@@ -20,7 +22,7 @@ const Contact = () => {
           <img 
             className="w-full h-full object-cover opacity-20" 
             alt="Church building exterior with welcoming entrance"
-           src="https://images.unsplash.com/photo-1573179329155-e1d8b290cf79" />
+           src={images?.contactHeroUrl || 'https://images.unsplash.com/photo-1573179329155-e1d8b290cf79'} />
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div

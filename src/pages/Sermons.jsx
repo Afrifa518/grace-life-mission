@@ -6,9 +6,11 @@ import { Play, Download, Calendar, Clock, User, Search, Filter } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
+import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
 const Sermons = () => {
   const { toast } = useToast();
+  const { images } = useSiteConfigContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [sermons, setSermons] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -71,7 +73,7 @@ const Sermons = () => {
           <img  
             className="w-full h-full object-cover opacity-20" 
             alt="Pastor delivering sermon from pulpit"
-           src="https://images.unsplash.com/photo-1551677629-c3e314ecf29c" />
+           src={images?.sermonsHeroUrl || 'https://images.unsplash.com/photo-1551677629-c3e314ecf29c'} />
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -31,6 +31,7 @@ const DashboardLayout = ({ children }) => {
     { icon: Image, label: 'Gallery', path: '/dashboard/gallery' },
     { icon: Users, label: 'Ministries', path: '/dashboard/ministries' },
     { icon: Users, label: 'Leadership', path: '/dashboard/leaders' },
+    { icon: Settings, label: 'Site Images', path: '/dashboard/site-images' },
   ];
 
   return (

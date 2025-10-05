@@ -21,11 +21,11 @@ const MapAndHours = () => {
           <div className="text-center">
             <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h4 className="text-lg font-semibold text-gray-700 mb-2">Interactive Map</h4>
-            <p className="text-gray-500">123 Faith Street, Grace City, GC 12345</p>
+            <p className="text-gray-500">Pomakrom, Oppsite VRA Quaters, Techiman BE, Ghana</p>
             <Button 
               onClick={() => toast({
                 title: "🚧 Interactive Map Coming Soon!",
-                description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
+                description: "Still working on Feature",
               })}
               className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
             >

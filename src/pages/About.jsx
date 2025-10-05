@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 import { Heart, Target, Eye, Users, Award, Globe } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
 const About = () => {
+  const { images } = useSiteConfigContext();
   const [leaders, setLeaders] = useState([]);
   const [leadersLoading, setLeadersLoading] = useState(false);
 
@@ -50,7 +52,7 @@ const About = () => {
           <img  
             className="w-full h-full object-cover opacity-20" 
             alt="Church building and congregation worshipping"
-           src="https://images.unsplash.com/photo-1487956382158-bb926046304a" />
+           src={images?.aboutHeroUrl || 'https://images.unsplash.com/photo-1487956382158-bb926046304a'} />
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center">

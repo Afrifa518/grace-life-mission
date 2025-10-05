@@ -6,11 +6,13 @@ import { Users, Heart, BookOpen, Star, Baby, Music, HeartHandshake as Handshake,
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
+import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
 const iconMap = { Users, Heart, BookOpen, Star, Baby, Music, Handshake, Globe };
 
 const Ministries = () => {
   const { toast } = useToast();
+  const { images } = useSiteConfigContext();
   const [ministries, setMinistries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [leaders, setLeaders] = useState([]);
@@ -19,7 +21,7 @@ const Ministries = () => {
   const handleJoinMinistry = (ministryName) => {
     toast({
       title: "🚧 Ministry Registration Coming Soon!",
-      description: "This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀",
+      description: "Still working on Feature",
     });
   };
 
@@ -77,7 +79,7 @@ const Ministries = () => {
           <img  
             className="w-full h-full object-cover opacity-20" 
             alt="Diverse group of people serving in various church ministries"
-           src="https://images.unsplash.com/photo-1647456614166-40dedca18fca" />
+           src={images?.ministriesHeroUrl || 'https://images.unsplash.com/photo-1647456614166-40dedca18fca'} />
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

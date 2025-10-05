@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button';
 import GalleryGrid from '@/components/gallery/GalleryGrid';
 import Lightbox from '@/components/gallery/Lightbox';
 import { supabase } from '@/lib/supabase';
+import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
 const Gallery = () => {
+  const { images } = useSiteConfigContext();
   const [selectedImage, setSelectedImage] = useState(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -57,7 +59,7 @@ const Gallery = () => {
           <img  
             className="w-full h-full object-cover opacity-20" 
             alt="Church community celebrating together"
-           src="https://images.unsplash.com/photo-1681056836865-6bcffdb50da6" />
+           src={images?.galleryHeroUrl || 'https://images.unsplash.com/photo-1681056836865-6bcffdb50da6'} />
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
