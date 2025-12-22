@@ -34,10 +34,9 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
-    { icon: Twitter, href: '#', label: 'X' },
+    { icon: Facebook, href: 'https://www.facebook.com/share/r/1AdLwMALT6/', label: 'Facebook' },
+    { icon: Instagram, href: 'https://www.instagram.com/gracelife_mission_int/', label: 'Instagram' },
+    { icon: Youtube, href: 'https://youtube.com/@gracelifemission_int?si=qnnkPuKD3J6w1_0c', label: 'YouTube' },
   ];
 
   return (
