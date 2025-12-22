@@ -21,6 +21,7 @@ const Gallery = () => {
         const { data, error } = await supabase
           .from('gallery')
           .select('id,title,date,description,type,status,imageUrl,youtubeUrl,created_at')
+          .eq('status', 'published')
           .order('date', { ascending: false });
         if (error) throw error;
         setItems(data || []);
@@ -54,12 +55,12 @@ const Gallery = () => {
         <meta name="description" content="Explore photos and stories from GraceLife Mission International. See our worship services, community events, outreach programs, and inspiring testimonies." />
       </Helmet>
 
-      <section className="relative py-32 bg-gradient-to-r from-blue-600 to-purple-600 text-white overflow-hidden">
+      <section className="relative py-32 hero-gradient text-white overflow-hidden">
         <div className="absolute inset-0">
           <img  
             className="w-full h-full object-cover opacity-20" 
             alt="Church community celebrating together"
-           src={images?.galleryHeroUrl || 'https://images.unsplash.com/photo-1681056836865-6bcffdb50da6'} />
+           src={images?.galleryHeroUrl || '/sunday.jpeg'} />
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -76,7 +77,7 @@ const Gallery = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -85,17 +86,17 @@ const Gallery = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
               Moments of <span className="gradient-text">Grace</span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Every picture tells a story of God's faithfulness and the love shared within our church community.
             </p>
           </motion.div>
 
           {loading ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
-              <p className="text-gray-500">Loading gallery...</p>
+              <p className="text-muted-foreground">Loading gallery...</p>
             </motion.div>
           ) : (
             <>
@@ -106,7 +107,7 @@ const Gallery = () => {
                   animate={{ opacity: 1 }}
                   className="text-center py-12"
                 >
-                  <p className="text-gray-500 text-lg">No items found.</p>
+                  <p className="text-muted-foreground text-lg">No items found.</p>
                 </motion.div>
               )}
             </>
@@ -116,7 +117,7 @@ const Gallery = () => {
       
       <Lightbox selectedImage={selectedImage} onClose={closeLightbox} onNavigate={navigateImage} />
 
-      <section className="py-20 bg-gradient-to-r from-blue-600 to purple-600 text-white">
+      <section className="py-20 hero-gradient text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -130,12 +131,12 @@ const Gallery = () => {
               Every photo represents real lives touched by God's love. Come and add your story to our growing family album.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300">
+              <Button className="bg-background text-foreground hover:bg-background/95 px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300">
                 Visit This Sunday
               </Button>
               <Button 
                 variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 text-lg font-semibold rounded-full backdrop-blur-sm bg-white/10 shadow-xl hover:shadow-2xl transition-all duration-300"
+                className="border-white/40 text-white hover:bg-white/10 hover:text-white px-8 py-4 text-lg font-semibold rounded-full backdrop-blur-sm bg-white/10 shadow-xl hover:shadow-2xl transition-all duration-300"
               >
                 Share Your Story
               </Button>

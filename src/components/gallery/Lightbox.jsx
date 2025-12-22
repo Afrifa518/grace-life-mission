@@ -34,7 +34,7 @@ const Lightbox = ({ selectedImage, onClose, onNavigate }) => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            className="relative max-w-4xl w-full bg-white rounded-2xl overflow-hidden"
+            className="relative max-w-4xl w-full bg-background rounded-2xl overflow-hidden border border-border"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -73,15 +73,15 @@ const Lightbox = ({ selectedImage, onClose, onNavigate }) => {
                   <img  
                     className="w-full h-full object-cover" 
                     alt={selectedImage.title}
-                    src={selectedImage.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011'} />
+                    src={selectedImage.imageUrl || '/sunday.jpeg'} />
                 )}
               </div>
               <div className="p-8">
                 <div className="flex items-center space-x-3 mb-4">
-                  <span className="text-gray-500 text-sm">{selectedImage.date}</span>
+                  <span className="text-muted-foreground text-sm">{selectedImage.date}</span>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">{selectedImage.title}</h2>
-                <p className="text-gray-600 leading-relaxed mb-6">{selectedImage.description}</p>
+                <h2 className="text-2xl font-bold text-foreground mb-4">{selectedImage.title}</h2>
+                <p className="text-muted-foreground leading-relaxed mb-6">{selectedImage.description}</p>
               </div>
             </div>
           </motion.div>

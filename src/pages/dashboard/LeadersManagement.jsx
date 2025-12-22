@@ -83,12 +83,12 @@ const LeadersManagement = () => {
       label: 'Name',
       render: (value, item) => (
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-            <UserSquare2 className="w-5 h-5 text-gray-500" />
+          <div className="w-10 h-10 bg-muted/40 rounded-xl flex items-center justify-center border border-border/60">
+            <UserSquare2 className="w-5 h-5 text-muted-foreground" />
           </div>
           <div>
-            <p className="font-medium text-gray-900">{value}</p>
-            <p className="text-xs text-gray-500">{item.role}</p>
+            <p className="font-medium text-foreground">{value}</p>
+            <p className="text-xs text-muted-foreground">{item.role}</p>
           </div>
         </div>
       )
@@ -97,8 +97,10 @@ const LeadersManagement = () => {
       key: 'status',
       label: 'Status',
       render: (value) => (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          value === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+          value === 'published'
+            ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20'
+            : 'bg-amber-500/15 text-amber-300 border-amber-500/20'
         }`}>
           {value}
         </span>
@@ -115,12 +117,12 @@ const LeadersManagement = () => {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Leadership</h2>
-          <p className="text-gray-600 mt-2">Manage church leadership team.</p>
+          <h2 className="text-3xl font-bold text-foreground">Leadership</h2>
+          <p className="text-muted-foreground mt-2">Manage church leadership team.</p>
         </div>
         <Button 
           onClick={handleAddNew}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+          className="shadow-lg shadow-black/20"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Leader

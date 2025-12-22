@@ -3,51 +3,55 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+html {
+  scroll-behavior: smooth;
+}
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222.2 84% 4.9%;
-  --muted: 210 40% 96%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96%;
-  --accent-foreground: 222.2 84% 4.9%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
-  --radius: 0.5rem;
+  --background: 36 33% 97%;
+  --foreground: 222 30% 10%;
+  --card: 36 33% 98%;
+  --card-foreground: 222 30% 10%;
+  --popover: 36 33% 98%;
+  --popover-foreground: 222 30% 10%;
+  --primary: 154 56% 22%;
+  --primary-foreground: 36 33% 98%;
+  --secondary: 36 20% 92%;
+  --secondary-foreground: 222 30% 10%;
+  --muted: 36 20% 92%;
+  --muted-foreground: 220 10% 40%;
+  --accent: 41 60% 88%;
+  --accent-foreground: 154 56% 18%;
+  --destructive: 0 74% 50%;
+  --destructive-foreground: 36 33% 98%;
+  --border: 36 16% 86%;
+  --input: 36 16% 86%;
+  --ring: 154 56% 22%;
+  --radius: 1.15rem;
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
+  --background: 222 48% 8%;
   --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
+  --card: 222 45% 11%;
   --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
+  --popover: 222 45% 11%;
   --popover-foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 222.2 84% 4.9%;
-  --secondary: 217.2 32.6% 17.5%;
+  --primary: 213 92% 55%;
+  --primary-foreground: 222 48% 8%;
+  --secondary: 222 30% 16%;
   --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
+  --muted: 222 28% 16%;
+  --muted-foreground: 215 20% 70%;
+  --accent: 220 32% 18%;
   --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;
+  --destructive: 0 72% 45%;
   --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 94.1%;
+  --border: 222 25% 20%;
+  --input: 222 25% 20%;
+  --ring: 213 92% 55%;
 }
 
 * {
@@ -57,32 +61,35 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 .font-display {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display', 'Poppins', serif;
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0f766e 0%, #a16207 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .glass-effect {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .hero-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #052e2b 0%, #0f766e 50%, #a16207 100%);
 }
 
 .section-gradient {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #fbf7f0 0%, #f1ede4 100%);
 }
 
 .card-hover {
@@ -91,7 +98,7 @@ body {
 
 .card-hover:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 24px 60px rgba(10, 10, 10, 0.10);
 }
 
 .animate-float {

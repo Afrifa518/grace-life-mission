@@ -33,74 +33,84 @@ const Navbar = () => {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed left-0 right-0 mx-[130px] mt-[15px] z-50 bg-white/30 backdrop-blur-lg border border-white/30 shadow-lg rounded-full px-4 py-1 transition-all duration-300"
-      style={{ fontFamily: 'Inter, sans-serif' }}
+      transition={{ type: 'spring', stiffness: 140, damping: 18 }}
+      className="fixed left-0 right-0 top-4 z-50 px-4"
     >
-      <div className="flex items-center w-full">
-        {/* Logo */}
-        <div className="flex-shrink-0 flex items-center" style={{ minWidth: 80 }}>
-          <Link to="/" className="flex items-center space-x-2">
-            <img src={logo} alt="GraceLife Mission Logo" className="h-10 w-auto object-contain" />
-          </Link>
-        </div>
-        {/* Nav links */}
-        <div className="hidden md:flex flex-1 items-center justify-center space-x-8">
-          {navItems.map(item => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`text-base font-semibold transition-colors duration-200 px-2 py-1 rounded-full ${
-                isOnWhiteBackground
-                  ? (location.pathname === item.path ? 'text-black underline underline-offset-8' : 'text-black/80 hover:text-black')
-                  : (location.pathname === item.path ? 'text-white/90 underline underline-offset-8' : 'text-white/80 hover:text-white')
-              }`}
-            >
-              {item.name}
+      <div
+        className={`relative mx-auto w-full max-w-7xl rounded-full border shadow-lg shadow-black/10 backdrop-blur-xl transition-all duration-300 ${
+          isOnWhiteBackground
+            ? 'border-white/40 bg-background/85'
+            : 'border-white/25 bg-background/55'
+        }`}
+      >
+        <div className="flex items-center w-full px-3 py-2 md:px-5 md:py-3">
+          {/* Logo */}
+          <div className="flex-shrink-0 flex items-center" style={{ minWidth: 80 }}>
+            <Link to="/" className="flex items-center space-x-2">
+              <img src={logo} alt="GraceLife Mission Logo" className="h-10 w-auto object-contain" />
             </Link>
-          ))}
-        </div>
-        {/* CTA Button */}
-        <div className="hidden md:flex flex-shrink-0 items-center" style={{ minWidth: 120 }}>
-          <a href="#" target="_blank" rel="noopener noreferrer">
-            <Button className={`bg-white/20 px-6 py-2 rounded-full font-semibold shadow-md border border-white/30 hover:bg-white/30 transition-all duration-200 backdrop-blur-md ${isOnWhiteBackground ? 'text-black' : 'text-white'}`}>
-              Visit Us
-            </Button>
-          </a>
-        </div>
-        {/* Mobile menu button */}
-        <div className="md:hidden flex-shrink-0 ml-auto">
-          <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)} className={isOnWhiteBackground ? 'text-black' : 'text-white'}>
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </Button>
-        </div>
-      </div>
-      {/* Mobile Navigation */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`absolute top-full left-0 w-full bg-black/90 backdrop-blur-xl rounded-b-2xl shadow-lg mt-2 py-6 px-6 flex flex-col space-y-4 z-40`}
-          >
+          </div>
+          {/* Nav links */}
+          <div className="hidden md:flex flex-1 items-center justify-center space-x-8">
             {navItems.map(item => (
               <Link
                 key={item.name}
                 to={item.path}
-                onClick={() => setIsOpen(false)}
-                className={`text-lg font-semibold transition-colors duration-200 px-2 py-2 rounded-full ${isOnWhiteBackground ? 'text-black' : 'text-white'}`}
+                className={`text-sm font-semibold transition-colors duration-200 px-2 py-1 rounded-full ${
+                  location.pathname === item.path
+                    ? 'text-foreground underline underline-offset-8'
+                    : 'text-foreground/70 hover:text-foreground'
+                }`}
               >
                 {item.name}
               </Link>
             ))}
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              <Button className={`w-full bg-white/20 py-3 rounded-full font-semibold shadow-md border border-white/30 hover:bg-white/30 transition-all duration-200 backdrop-blur-md ${isOnWhiteBackground ? 'text-black' : 'text-white'}`}>
+          </div>
+          {/* CTA Button */}
+          <div className="hidden md:flex flex-shrink-0 items-center" style={{ minWidth: 120 }}>
+            <Link to="/contact">
+              <Button variant="outline" className="rounded-full border-white/40 bg-white/10 text-foreground hover:bg-white/20">
                 Visit Us
               </Button>
-            </a>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </Link>
+          </div>
+          {/* Mobile menu button */}
+          <div className="md:hidden flex-shrink-0 ml-auto">
+            <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)} className="text-foreground">
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </Button>
+          </div>
+        </div>
+        {/* Mobile Navigation */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute top-full left-0 w-full rounded-2xl border border-white/20 bg-background/80 shadow-xl shadow-black/10 backdrop-blur-xl mt-3 py-5 px-5 flex flex-col space-y-2 z-40"
+            >
+              {navItems.map(item => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  onClick={() => setIsOpen(false)}
+                  className={`text-base font-semibold transition-colors duration-200 px-3 py-2 rounded-xl ${
+                    location.pathname === item.path
+                      ? 'bg-accent/50 text-foreground'
+                      : 'text-foreground/80 hover:bg-accent/40 hover:text-foreground'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              <Link to="/contact" onClick={() => setIsOpen(false)}>
+                <Button className="w-full rounded-xl">Visit Us</Button>
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.nav>
   );
 };

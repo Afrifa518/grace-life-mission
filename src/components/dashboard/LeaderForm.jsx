@@ -76,33 +76,33 @@ const LeaderForm = ({ initialData, onCancel, onSaved }) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-          <input name="name" value={form.name} onChange={updateField} required className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Name</label>
+          <input name="name" value={form.name} onChange={updateField} required className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
-          <input name="role" value={form.role} onChange={updateField} required className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Role</label>
+          <input name="role" value={form.role} onChange={updateField} required className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Order</label>
-          <input type="number" name="order" value={form.order} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Order</label>
+          <input type="number" name="order" value={form.order} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-          <select name="status" value={form.status} onChange={updateField} className="w-full px-3 py-2 border rounded-lg">
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Status</label>
+          <select name="status" value={form.status} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent">
             <option value="published">Published</option>
             <option value="draft">Draft</option>
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Photo (optional)</label>
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Photo (optional)</label>
           <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full" />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-        <textarea name="bio" value={form.bio} onChange={updateField} rows={4} className="w-full px-3 py-2 border rounded-lg" />
+        <label className="block text-sm font-medium text-foreground/80 mb-2">Bio</label>
+        <textarea name="bio" value={form.bio} onChange={updateField} rows={4} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
       </div>
 
       <div className="flex justify-end gap-2">

@@ -1,37 +1,3 @@
-import { MapPin, Phone, Mail, MessageSquare } from 'lucide-react';
-
-export const contactInfo = [
-  {
-    icon: MapPin,
-    title: "Visit Us",
-    details: ["Pomakrom, Oppsite VRA Quaters", "Techiman BE, Ghana"],
-    color: "from-blue-500 to-blue-600"
-  },
-  {
-    icon: Phone,
-    title: "Call Us",
-    details: ["+233505983499", "+233244892719"],
-    color: "from-green-500 to-green-600"
-  },
-  {
-    icon: Mail,
-    title: "Email Us",
-    details: ["info@gracelifemission.org"],
-    color: "from-purple-500 to-purple-600"
-  },
-  {
-    icon: MessageSquare,
-    title: "WhatsApp",
-    details: ["+233505983499", "Quick responses available"],
-    color: "from-green-400 to-green-500"
-  }
-];
-
-export const serviceHours = [
-  { day: "Sunday", times: "8:00 AM & 11:00 AM", special: "Worship Services" },
-  { day: "Friday", times: "7:00 PM", special: "Evening Service" }
-];
-
 export const visitReasons = [
   { value: 'general', label: 'General Inquiry' },
   { value: 'visit', label: 'Planning to Visit' },
@@ -39,31 +5,4 @@ export const visitReasons = [
   { value: 'ministry', label: 'Ministry Information' },
   { value: 'counseling', label: 'Pastoral Counseling' },
   { value: 'event', label: 'Event Information' }
-];
-
-export const staffDirectory = [
-  {
-    name: "Pastor John Smith",
-    role: "Senior Pastor",
-    email: "pastor@gracelifemission.org",
-    phone: "(555) 123-4567 ext. 101",
-    specialties: ["Pastoral Care", "Counseling", "General Inquiries"],
-    image: "Senior pastor in formal attire smiling warmly"
-  },
-  {
-    name: "Pastor Sarah Johnson",
-    role: "Associate Pastor",
-    email: "sarah@gracelifemission.org",
-    phone: "(555) 123-4567 ext. 102",
-    specialties: ["Youth Ministry", "Women's Ministry", "Events"],
-    image: "Female associate pastor in professional attire"
-  },
-  {
-    name: "Mary Williams",
-    role: "Church Administrator",
-    email: "admin@gracelifemission.org",
-    phone: "(555) 123-4567 ext. 100",
-    specialties: ["General Info", "Facility Rentals", "Donations"],
-    image: "Church administrator at her desk"
-  }
 ];

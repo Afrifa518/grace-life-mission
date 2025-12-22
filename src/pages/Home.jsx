@@ -14,14 +14,18 @@ import {
   Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
 import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
 const Home = () => {
-  const { toast } = useToast();
   const { images } = useSiteConfigContext();
   const [galleryPreview, setGalleryPreview] = React.useState([]);
+  const [latestSermon, setLatestSermon] = React.useState(null);
+  const [latestSermonLoading, setLatestSermonLoading] = React.useState(false);
+  const [upcomingEvents, setUpcomingEvents] = React.useState([]);
+  const [upcomingEventsLoading, setUpcomingEventsLoading] = React.useState(false);
+  const [homeMinistries, setHomeMinistries] = React.useState([]);
+  const [homeMinistriesLoading, setHomeMinistriesLoading] = React.useState(false);
   React.useEffect(() => {
     const fetchPreview = async () => {
       if (!supabase) return;
@@ -29,6 +33,7 @@ const Home = () => {
         const { data, error } = await supabase
           .from('gallery')
           .select('id,imageUrl')
+          .eq('status', 'published')
           .order('date', { ascending: false })
           .limit(8);
         if (error) throw error;
@@ -41,45 +46,115 @@ const Home = () => {
     fetchPreview();
   }, []);
 
+  React.useEffect(() => {
+    const fetchLatestSermon = async () => {
+      if (!supabase) return;
+      setLatestSermonLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('sermons')
+          .select('*')
+          .eq('status', 'published')
+          .order('date', { ascending: false })
+          .limit(1);
+        if (error) throw error;
+        setLatestSermon((data && data[0]) || null);
+      } catch (err) {
+        // no toast on home to keep quiet
+        console.error(err);
+        setLatestSermon(null);
+      } finally {
+        setLatestSermonLoading(false);
+      }
+    };
+    fetchLatestSermon();
+  }, []);
+
+  React.useEffect(() => {
+    const fetchUpcomingEvents = async () => {
+      if (!supabase) return;
+      setUpcomingEventsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .eq('status', 'published')
+          .order('date', { ascending: true })
+          .limit(8);
+        if (error) throw error;
+
+        const now = new Date();
+        const upcoming = (data || [])
+          .filter((e) => {
+            const d = (Array.isArray(e.schedule) && e.schedule[0]?.date) ? e.schedule[0].date : e.date;
+            if (!d) return false;
+            return new Date(d) >= now;
+          })
+          .sort((a, b) => {
+            const ad = (Array.isArray(a.schedule) && a.schedule[0]?.date) ? a.schedule[0].date : a.date;
+            const bd = (Array.isArray(b.schedule) && b.schedule[0]?.date) ? b.schedule[0].date : b.date;
+            return new Date(ad) - new Date(bd);
+          })
+          .slice(0, 4);
+
+        setUpcomingEvents(upcoming);
+      } catch (err) {
+        // no toast on home to keep quiet
+        console.error(err);
+        setUpcomingEvents([]);
+      } finally {
+        setUpcomingEventsLoading(false);
+      }
+    };
+    fetchUpcomingEvents();
+  }, []);
+
+  React.useEffect(() => {
+    const fetchHomeMinistries = async () => {
+      if (!supabase) return;
+      setHomeMinistriesLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('ministries')
+          .select('*')
+          .eq('status', 'published')
+          .order('order', { ascending: true })
+          .order('title', { ascending: true })
+          .limit(4);
+        if (error) throw error;
+        setHomeMinistries(data || []);
+      } catch (err) {
+        // no toast on home to keep quiet
+        console.error(err);
+        setHomeMinistries([]);
+      } finally {
+        setHomeMinistriesLoading(false);
+      }
+    };
+    fetchHomeMinistries();
+  }, []);
+
   const handleWatchLive = () => {
     window.open('https://meet.google.com/sxs-scqm-twk', '_blank');
   };
 
-  const upcomingEvents = [
-    {
-      title: "3 Days Fasting & Prayer(All Night Service)",
-      date: "25th - 27th June 2025",
-      time: "10:00 PM - 04:00 AM",
-      location: "Church Premises"
-    }
-  ];
+  const getMinistryIcon = (title) => {
+    const t = (title || '').toLowerCase();
+    if (t.includes('women')) return Heart;
+    if (t.includes('youth')) return Users;
+    if (t.includes('outreach') || t.includes('mission')) return Star;
+    return BookOpen;
+  };
 
-  const ministries = [
-    {
-      title: "Youth Ministry",
-      description: "Empowering the next generation with faith and purpose",
-      icon: Users,
-      color: "from-blue-500 to-cyan-500"
-    },
-    {
-      title: "Women's Ministry",
-      description: "Building sisterhood and spiritual growth together",
-      icon: Heart,
-      color: "from-pink-500 to-rose-500"
-    },
-    // {
-    //   title: "Men's Ministry",
-    //   description: "Strengthening men to lead with godly character",
-    //   icon: BookOpen,
-    //   color: "from-green-500 to-emerald-500"
-    // },
-    {
-      title: "Outreach",
-      description: "Spreading God's love throughout our community",
-      icon: Star,
-      color: "from-purple-500 to-violet-500"
+  const formatEventDate = (event) => {
+    const d = (Array.isArray(event?.schedule) && event.schedule[0]?.date) ? event.schedule[0].date : event?.date;
+    if (!d) return '';
+    try {
+      return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch {
+      return '';
     }
-  ];
+  };
 
   return (
     <>
@@ -93,7 +168,7 @@ const Home = () => {
         {/* Background Image */}
         <img src={images?.homeHeroUrl || '/sunday.jpeg'} alt="Home hero" className="absolute inset-0 w-full h-full object-cover object-center z-0" />
         {/* Overlay */}
-        <div className="absolute inset-0 z-10 bg-gradient-to-r from-green-900/90 via-green-700/40 to-transparent" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-r from-foreground/90 via-primary/35 to-transparent" />
         <div className="relative z-20 max-w-3xl pl-8 pr-4 py-32 flex flex-col items-start">
           <div className="mb-6 text-white/80 font-medium text-lg flex items-center gap-3">
             <span className="inline-block w-10 h-0.5 bg-white/40 rounded-full mr-2" />
@@ -106,16 +181,74 @@ const Home = () => {
             Called to proclaim the grace of God, raise disciples, and prepare the Church for the return of Christ.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 items-start mb-10">
-            <a href="#about" className="inline-flex items-center bg-white text-black font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:bg-gray-100 transition-all">
-              Join Our Family
-              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-            </a>
+            <Button asChild size="lg" className="rounded-full px-8">
+              <a href="#about">
+                Join Our Family
+                <ArrowRight className="w-5 h-5" />
+              </a>
+            </Button>
+            <Button
+              onClick={handleWatchLive}
+              variant="outline"
+              size="lg"
+              className="rounded-full border-white/35 bg-white/10 text-white hover:bg-white/15 hover:text-white"
+            >
+              Watch Live
+              <Play className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 section-gradient">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
+              A Place to <span className="gradient-text">Belong</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Warm worship, clear teaching, and a community that feels like home.
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-sm p-6 shadow-sm">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-amber-700 flex items-center justify-center shadow-sm shadow-black/10 mb-4">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-foreground mb-2">Bible-Centered Teaching</h3>
+              <p className="text-muted-foreground">Practical, Spirit-led messages that build faith and maturity.</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-sm p-6 shadow-sm">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-700 to-primary flex items-center justify-center shadow-sm shadow-black/10 mb-4">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-foreground mb-2">Family & Fellowship</h3>
+              <p className="text-muted-foreground">You’ll find people who care, serve, and walk with you.</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-sm p-6 shadow-sm">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-emerald-500 flex items-center justify-center shadow-sm shadow-black/10 mb-4">
+                <Heart className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-foreground mb-2">Grace in Action</h3>
+              <p className="text-muted-foreground">We’re committed to discipleship, outreach, and real transformation.</p>
+            </div>
+          </div>
+          <div className="text-center mt-10">
+            <Link to="/contact">
+              <Button className="rounded-full px-8">Plan a Visit</Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Welcome Section */}
-      <section className="py-20 bg-white">
+      <section id="about" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -124,24 +257,24 @@ const Home = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
                 Experience God's <span className="gradient-text">Amazing Grace</span>
               </h2>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 Our vision is to make disciples of Christ through a life of grace (Titus 2:11–14). We do this through missionary work, discipleship training, the teaching ministry, and strong contact group systems—preparing the Church for the return of Jesus.
               </p>
               <div className="grid grid-cols-2 gap-6 mb-8">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="text-3xl font-bold text-blue-600 mb-2">100+</div>
-                  <div className="text-gray-600">Active Members</div>
+                <div className="text-center p-4 bg-secondary/60 rounded-xl border border-border">
+                  <div className="text-3xl font-bold text-primary mb-2">100+</div>
+                  <div className="text-muted-foreground">Active Members</div>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <div className="text-3xl font-bold text-purple-600 mb-2">10+</div>
-                  <div className="text-gray-600">Years Serving</div>
+                <div className="text-center p-4 bg-accent/50 rounded-xl border border-border">
+                  <div className="text-3xl font-bold text-amber-700 mb-2">10+</div>
+                  <div className="text-muted-foreground">Years Serving</div>
                 </div>
               </div>
               <Link to="/about">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                <Button className="rounded-full px-8">
                   Learn More About Us
                 </Button>
               </Link>
@@ -178,52 +311,69 @@ const Home = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
               Upcoming <span className="gradient-text">Events</span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Join us for these special gatherings as we worship, learn, and grow together in faith.
             </p>
           </motion.div>
 
-          <div className={
-            upcomingEvents.length <= 4
-              ? "flex justify-center"
-              : "grid grid-cols-1 md:grid-cols-3 gap-8"
-          }>
-            {upcomingEvents.map((event, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 card-hover"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mr-4">
-                    <Calendar className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                    <p className="text-sm text-gray-600">{event.date}</p>
-                  </div>
-                </div>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <div className="flex items-center">
-                    <Clock className="w-4 h-4 mr-2" />
-                    {event.time}
-                  </div>
-                  <div className="flex items-center">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    {event.location}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {upcomingEventsLoading ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-10">
+              <p className="text-muted-foreground">Loading upcoming events...</p>
+            </motion.div>
+          ) : upcomingEvents.length === 0 ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-10">
+              <p className="text-muted-foreground">No upcoming events scheduled yet.</p>
+            </motion.div>
+          ) : (
+            <div className={
+              upcomingEvents.length <= 4
+                ? "flex justify-center flex-wrap gap-6"
+                : "grid grid-cols-1 md:grid-cols-3 gap-8"
+            }>
+              {upcomingEvents.map((event, index) => {
+                const time = (Array.isArray(event.schedule) && event.schedule[0]?.time) ? event.schedule[0].time : event.time;
+                return (
+                  <motion.div
+                    key={event.id || index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="bg-card rounded-2xl p-6 shadow-sm border border-border hover:shadow-md transition-all duration-300 card-hover w-full max-w-sm"
+                  >
+                    <div className="flex items-center mb-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary to-amber-700 rounded-xl flex items-center justify-center mr-4 shadow-sm shadow-black/10">
+                        <Calendar className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground">{event.title}</h3>
+                        <p className="text-sm text-muted-foreground">{formatEventDate(event)}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                      {time && (
+                        <div className="flex items-center">
+                          <Clock className="w-4 h-4 mr-2" />
+                          {time}
+                        </div>
+                      )}
+                      {event.location && (
+                        <div className="flex items-center">
+                          <MapPin className="w-4 h-4 mr-2" />
+                          {event.location}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -233,7 +383,7 @@ const Home = () => {
             className="text-center mt-12"
           >
             <Link to="/events">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button className="rounded-full px-8">
                 View All Events
               </Button>
             </Link>
@@ -242,7 +392,7 @@ const Home = () => {
       </section>
 
       {/* Latest Sermon */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -252,36 +402,54 @@ const Home = () => {
             className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
           >
             <div>
-              <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
                 Latest <span className="gradient-text">Sermon</span>
               </h2>
-              <p className="text-lg text-gray-600 mb-6">
-                Walking in Faith: Trusting God's Plan
-              </p>
-              <p className="text-gray-600 mb-8">
-                Discover how to trust God's plan even when the path seems unclear. Learn practical steps to strengthen your faith journey.
-              </p>
+              {latestSermonLoading ? (
+                <p className="text-muted-foreground mb-8">Loading latest sermon...</p>
+              ) : latestSermon ? (
+                <>
+                  <p className="text-lg text-foreground font-semibold mb-4">
+                    {latestSermon.title}
+                  </p>
+                  {latestSermon.description ? (
+                    <p className="text-muted-foreground mb-8">
+                      {latestSermon.description}
+                    </p>
+                  ) : (
+                    <p className="text-muted-foreground mb-8">
+                      Listen to our latest message and be encouraged in your faith.
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="text-muted-foreground mb-8">No sermons available yet. Please check back soon.</p>
+              )}
               <div className="flex gap-4">
                 <Link to="/sermons">
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6">
+                  <Button className="rounded-full px-6">
                     Watch Sermons
                   </Button>
                 </Link>
-                <a href="#" onClick={(e) => e.preventDefault()} className="inline-flex items-center text-blue-600 font-semibold">
-                  Read Notes <ArrowRight className="w-4 h-4 ml-2" />
-                </a>
+                {latestSermon?.youtubeUrl && (
+                  <a href={latestSermon.youtubeUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-primary font-semibold">
+                    Watch Latest <ArrowRight className="w-4 h-4 ml-2" />
+                  </a>
+                )}
               </div>
             </div>
             <div>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?q=80&w=1600&auto=format&fit=crop"
-                  alt="Latest sermon placeholder"
+                  src={latestSermon?.imageUrl || images?.homeWelcomeUrl || '/sunday.jpeg'}
+                  alt={latestSermon?.title || 'Latest sermon'}
                   className="w-full h-80 object-cover"
                 />
-                <div className="absolute bottom-4 left-4 bg-black/60 text-white rounded-full px-4 py-2 text-sm">
-                  Pastor John Smith · 45 min
-                </div>
+                {!latestSermonLoading && latestSermon && (
+                  <div className="absolute bottom-4 left-4 bg-black/60 text-white rounded-full px-4 py-2 text-sm">
+                    {[latestSermon.speaker, latestSermon.duration].filter(Boolean).join(' · ') || (latestSermon.date ? new Date(latestSermon.date).toLocaleDateString() : '')}
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
@@ -298,77 +466,35 @@ const Home = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
               Plan Your <span className="gradient-text">Visit</span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               We can’t wait to meet you. Here’s what you can expect when you visit us.
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-2">Service Times</h3>
-              <p className="text-gray-600">Sundays: 8:00 AM & 11:00 AM</p>
-              <p className="text-gray-600">Wednesdays: 6:30 PM (Prayer)</p>
+            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+              <h3 className="font-semibold text-foreground mb-2">Service Times</h3>
+              <p className="text-muted-foreground">Sundays: 8:00 AM & 11:00 AM</p>
+              <p className="text-muted-foreground">Wednesdays: 6:30 PM (Prayer)</p>
             </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-2">Location</h3>
-              <p className="text-gray-600">GraceLife Mission International</p>
-              <p className="text-gray-600">123 Faith Avenue, Accra</p>
+            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+              <h3 className="font-semibold text-foreground mb-2">Location</h3>
+              <p className="text-muted-foreground">Pomakrom, Oppsite VRA Quaters</p>
+              <p className="text-muted-foreground">Techiman BE, Ghana</p>
             </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-2">Families & Kids</h3>
-              <p className="text-gray-600">Safe, fun environments for kids of all ages every service.</p>
+            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+              <h3 className="font-semibold text-foreground mb-2">Families & Kids</h3>
+              <p className="text-muted-foreground">Safe, fun environments for kids of all ages every service.</p>
             </div>
           </div>
           <div className="text-center mt-10">
             <Link to="/contact">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button className="rounded-full px-8">
                 Get Directions
               </Button>
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonies */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
-              Powerful <span className="gradient-text">Testimonies</span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Stories of lives transformed by the love and power of Jesus.
-            </p>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1,2,3].map((i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.05 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
-              >
-                <img
-                  src={`https://images.unsplash.com/photo-15${i}682933812-871e81e33e60?q=80&w=1600&auto=format&fit=crop`}
-                  alt="Testimony placeholder"
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <p className="text-gray-700 italic mb-4">“God has completely transformed my life through this church. I found hope, healing, and a family.”</p>
-                  <p className="text-sm font-semibold text-gray-900">Member Name</p>
-                </div>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
@@ -383,16 +509,16 @@ const Home = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
               From Our <span className="gradient-text">Gallery</span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">A glimpse into worship, community, and outreach moments.</p>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">A glimpse into worship, community, and outreach moments.</p>
           </motion.div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {(galleryPreview || []).map((g, i) => (
               <div key={g.id || i} className="relative rounded-xl overflow-hidden shadow-md">
                 <img
-                  src={g.imageUrl || `https://picsum.photos/seed/glmi-${i}/600/400`}
+                  src={g.imageUrl || '/sunday.jpeg'}
                   alt="Gallery placeholder"
                   className="w-full h-40 md:h-44 object-cover hover:scale-105 transition-transform duration-300"
                 />
@@ -402,7 +528,7 @@ const Home = () => {
           {(galleryPreview || []).length > 0 && (
             <div className="text-center mt-10">
               <Link to="/gallery">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                <Button className="rounded-full px-8">
                   View Full Gallery
                 </Button>
               </Link>
@@ -412,7 +538,7 @@ const Home = () => {
       </section>
 
       {/* Ministries Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -421,36 +547,50 @@ const Home = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
               Our <span className="gradient-text">Ministries</span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Discover ways to grow in faith and serve others through our diverse ministry programs.
             </p>
           </motion.div>
 
-          <div className={
-            ministries.length <= 4
-              ? "flex justify-center flex-wrap gap-8"
-              : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-          }>
-            {ministries.map((ministry, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center group cursor-pointer"
-              >
-                <div className={`w-20 h-20 bg-gradient-to-br ${ministry.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                  <ministry.icon className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{ministry.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{ministry.description}</p>
-              </motion.div>
-            ))}
-          </div>
+          {homeMinistriesLoading ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-10">
+              <p className="text-muted-foreground">Loading ministries...</p>
+            </motion.div>
+          ) : homeMinistries.length === 0 ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-10">
+              <p className="text-muted-foreground">No ministries published yet.</p>
+            </motion.div>
+          ) : (
+            <div className={
+              homeMinistries.length <= 4
+                ? "flex justify-center flex-wrap gap-8"
+                : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            }>
+              {homeMinistries.map((ministry, index) => {
+                const Icon = getMinistryIcon(ministry.title);
+                const color = ministry.color || 'from-primary to-amber-700';
+                return (
+                  <motion.div
+                    key={ministry.id || index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="text-center group"
+                  >
+                    <div className={`w-20 h-20 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                      <Icon className="w-10 h-10 text-white" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-foreground mb-3">{ministry.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{ministry.subtitle || ministry.description || ''}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -460,7 +600,7 @@ const Home = () => {
             className="text-center mt-12"
           >
             <Link to="/ministries">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button className="rounded-full px-8">
                 Explore All Ministries
               </Button>
             </Link>
@@ -468,8 +608,48 @@ const Home = () => {
         </div>
       </section>
 
+      <section className="py-20 section-gradient">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground">
+                Partner With <span className="gradient-text">The Mission</span>
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Your giving helps us preach the Gospel, disciple believers, and reach our community with practical love.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* <Link to="/donations">
+                  <Button className="rounded-full px-8">Give Today</Button>
+                </Link> */}
+                <Link to="/contact">
+                  <Button variant="outline" className="rounded-full px-8">
+                    Talk to Us
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="rounded-3xl border border-border bg-background/70 backdrop-blur-sm p-8 shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-amber-700 flex items-center justify-center shadow-sm shadow-black/10">
+                  <Heart className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Ways to Support</h3>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li>Giving</li>
+                    <li>Volunteering & Service</li>
+                    <li>Outreach & Community Care</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="py-20 hero-gradient text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -486,18 +666,18 @@ const Home = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/contact">
-                <Button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300">
+                <Button className="rounded-full px-8 py-4 text-lg font-semibold bg-background text-foreground hover:bg-background/95 shadow-xl hover:shadow-2xl transition-all duration-300">
                   Visit Us This Sunday
                 </Button>
               </Link>
-              <Link to="/donations">
+              {/* <Link to="/donations">
                 <Button 
                   variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 text-lg font-semibold rounded-full backdrop-blur-sm bg-white/10 shadow-xl hover:shadow-2xl transition-all duration-300"
+                  className="border-white/40 text-white hover:bg-white/10 hover:text-white px-8 py-4 text-lg font-semibold rounded-full backdrop-blur-sm bg-white/10 shadow-xl hover:shadow-2xl transition-all duration-300"
                 >
                   Support Our Mission
                 </Button>
-              </Link>
+              </Link> */}
             </div>
           </motion.div>
         </div>

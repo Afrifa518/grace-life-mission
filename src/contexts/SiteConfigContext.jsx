@@ -5,13 +5,13 @@ import { uploadToStorage } from '@/lib/utils';
 const DEFAULT_IMAGES = {
   homeHeroUrl: '/sunday.jpeg',
   homeWelcomeUrl: '/sunday.jpeg',
-  aboutHeroUrl: 'https://images.unsplash.com/photo-1487956382158-bb926046304a',
-  sermonsHeroUrl: 'https://images.unsplash.com/photo-1551677629-c3e314ecf29c',
-  eventsHeroUrl: 'https://images.unsplash.com/photo-1563902244988-42d466e79b25',
-  ministriesHeroUrl: 'https://images.unsplash.com/photo-1647456614166-40dedca18fca',
-  donationsHeroUrl: 'https://images.unsplash.com/photo-1662045468936-47364448771e',
-  contactHeroUrl: 'https://images.unsplash.com/photo-1573179329155-e1d8b290cf79',
-  galleryHeroUrl: 'https://images.unsplash.com/photo-1681056836865-6bcffdb50da6',
+  aboutHeroUrl: '/sunday.jpeg',
+  sermonsHeroUrl: '/sunday.jpeg',
+  eventsHeroUrl: '/sunday.jpeg',
+  ministriesHeroUrl: '/sunday.jpeg',
+  donationsHeroUrl: '/sunday.jpeg',
+  contactHeroUrl: '/sunday.jpeg',
+  galleryHeroUrl: '/sunday.jpeg',
   footerBackgroundUrl: '/sunday.jpeg',
 };
 
@@ -49,7 +49,9 @@ export const SiteConfigProvider = ({ children }) => {
         const k = row?.key;
         const v = row?.value;
         if (k && typeof v === 'string' && KNOWN_KEYS.includes(k)) {
-          next[k] = v;
+          const url = v.trim();
+          const isPlaceholder = /(?:^|\.)unsplash\.com\b|\bpicsum\.photos\b/i.test(url);
+          next[k] = isPlaceholder ? DEFAULT_IMAGES[k] : url;
         }
       });
       setImages(next);

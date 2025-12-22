@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Calendar, Users, MapPin, Clock } from 'lucide-react';
+import { Plus, Calendar, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import DataTable from '@/components/dashboard/DataTable';
@@ -104,7 +103,7 @@ const EventsManagement = () => {
       label: 'Event Title',
       render: (value) => (
         <div className="max-w-xs">
-          <p className="font-medium text-gray-900 truncate">{value}</p>
+          <p className="font-medium text-foreground truncate">{value}</p>
         </div>
       )
     },
@@ -113,8 +112,8 @@ const EventsManagement = () => {
       label: 'Date',
       render: (value, item) => (
         <div className="flex items-center space-x-2">
-          <Calendar className="w-4 h-4 text-gray-400" />
-          <span className="text-sm text-gray-600">
+          <Calendar className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
             {item.schedule?.length ? new Date(item.schedule[0].date).toLocaleDateString() : new Date(value).toLocaleDateString()}
           </span>
         </div>
@@ -125,8 +124,8 @@ const EventsManagement = () => {
       label: 'Location',
       render: (value) => (
         <div className="flex items-center space-x-2">
-          <MapPin className="w-4 h-4 text-gray-400" />
-          <span className="text-sm text-gray-600">{value}</span>
+          <MapPin className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">{value}</span>
         </div>
       )
     },
@@ -134,7 +133,7 @@ const EventsManagement = () => {
       key: 'category',
       label: 'Category',
       render: (value) => (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-sky-500/15 text-sky-300 border-sky-500/20">
           {value}
         </span>
       )
@@ -143,10 +142,10 @@ const EventsManagement = () => {
       key: 'status',
       label: 'Status',
       render: (value) => (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
           value === 'published' 
-            ? 'bg-green-100 text-green-800' 
-            : 'bg-yellow-100 text-yellow-800'
+            ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20' 
+            : 'bg-amber-500/15 text-amber-300 border-amber-500/20'
         }`}>
           {value}
         </span>
@@ -164,12 +163,12 @@ const EventsManagement = () => {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Events Management</h2>
-          <p className="text-gray-600 mt-2">Manage church events, registrations, and scheduling.</p>
+          <h2 className="text-3xl font-bold text-foreground">Events Management</h2>
+          <p className="text-muted-foreground mt-2">Manage church events, registrations, and scheduling.</p>
         </div>
         <Button 
           onClick={handleAddNew}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+          className="shadow-lg shadow-black/20"
         >
           <Plus className="w-4 h-4 mr-2" />
           Create New Event
@@ -208,16 +207,16 @@ const EventsManagement = () => {
       {viewing && (
         <Modal open={true} title={viewing.title} onClose={() => setViewing(null)}>
           <div className="space-y-4">
-            <div className="relative w-full h-56 rounded-xl overflow-hidden bg-gray-100">
+            <div className="relative w-full h-56 rounded-xl overflow-hidden bg-muted/40">
               <img
-                src={viewing.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011'}
+                src={viewing.imageUrl || '/sunday.jpeg'}
                 alt={viewing.title}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
               <div>
-                <span className="font-medium text-gray-900">Schedule:</span>
+                <span className="font-medium text-foreground">Schedule:</span>
                 <div className="mt-1 space-y-1">
                   {(viewing.schedule && viewing.schedule.length ? viewing.schedule : [{ date: viewing.date, time: viewing.time }]).map((s, i) => (
                     <div key={i}>{s.date ? new Date(s.date).toLocaleDateString() : '—'}{s.time ? ` · ${s.time}` : ''}</div>
@@ -225,31 +224,33 @@ const EventsManagement = () => {
                 </div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Location:</span>
+                <span className="font-medium text-foreground">Location:</span>
                 <div>{viewing.location || '—'}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Category:</span>
+                <span className="font-medium text-foreground">Category:</span>
                 <div>{viewing.category || '—'}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Recurring:</span>
+                <span className="font-medium text-foreground">Recurring:</span>
                 <div>{viewing.recurring || '—'}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Status:</span>
-                <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  viewing.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                <span className="font-medium text-foreground">Status:</span>
+                <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                  viewing.status === 'published'
+                    ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20'
+                    : 'bg-amber-500/15 text-amber-300 border-amber-500/20'
                 }`}>{viewing.status}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Created:</span>
+                <span className="font-medium text-foreground">Created:</span>
                 <div>{viewing.created_at ? new Date(viewing.created_at).toLocaleString() : '—'}</div>
               </div>
             </div>
             <div>
-              <span className="font-medium text-gray-900">Description:</span>
-              <p className="mt-1 text-gray-700 whitespace-pre-line">{viewing.description || '—'}</p>
+              <span className="font-medium text-foreground">Description:</span>
+              <p className="mt-1 text-muted-foreground whitespace-pre-line">{viewing.description || '—'}</p>
             </div>
             <div className="flex justify-end">
               <Button variant="outline" onClick={() => setViewing(null)}>Close</Button>

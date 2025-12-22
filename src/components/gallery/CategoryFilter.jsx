@@ -13,17 +13,17 @@ const CategoryFilter = ({ categories, selectedCategory, setSelectedCategory }) =
       className="flex flex-wrap gap-3 justify-center"
     >
       <div className="flex items-center space-x-2 mr-4">
-        <Filter className="w-5 h-5 text-gray-600" />
-        <span className="text-gray-700 font-medium">Filter by:</span>
+        <Filter className="w-5 h-5 text-muted-foreground" />
+        <span className="text-foreground/80 font-medium">Filter by:</span>
       </div>
       {list.map((category) => (
         <button
           key={category}
           onClick={() => setSelectedCategory(category)}
-          className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+          className={`px-6 py-3 rounded-full font-medium transition-all duration-300 border ${
             selectedCategory === category
-              ? 'bg-blue-600 text-white shadow-lg'
-              : 'bg-white text-gray-600 hover:bg-blue-50 hover:text-blue-600 shadow-md'
+              ? 'bg-primary text-primary-foreground border-primary/30 shadow-sm shadow-black/10'
+              : 'bg-background/80 text-foreground/70 border-border hover:bg-accent/60 hover:text-foreground shadow-sm'
           }`}
         >
           {category}

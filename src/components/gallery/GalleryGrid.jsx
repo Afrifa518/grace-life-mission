@@ -21,7 +21,7 @@ const GalleryGrid = ({ items, onImageClick }) => {
       {items.map((item, index) => {
         const isVideo = item.type === 'video' && item.youtubeUrl;
         const ytId = isVideo ? getYouTubeId(item.youtubeUrl) : '';
-        const thumb = isVideo && ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : (item.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011');
+        const thumb = isVideo && ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : (item.imageUrl || '/sunday.jpeg');
         return (
           <motion.div
             key={item.id}
@@ -32,7 +32,7 @@ const GalleryGrid = ({ items, onImageClick }) => {
             className="group cursor-pointer"
             onClick={() => onImageClick(item)}
           >
-            <div className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 card-hover">
+            <div className="relative overflow-hidden rounded-2xl shadow-sm border border-border hover:shadow-md transition-all duration-300 card-hover">
               <div className="relative h-64">
                 <img  
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
@@ -42,18 +42,18 @@ const GalleryGrid = ({ items, onImageClick }) => {
 
                 <div className="absolute top-4 right-4">
                   {isVideo ? (
-                    <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-amber-700 rounded-full flex items-center justify-center">
                       <Play className="w-4 h-4 text-white" />
                     </div>
                   ) : (
-                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                       <Star className="w-4 h-4 text-white" />
                     </div>
                   )}
                 </div>
 
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-blue-200 transition-colors">
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-amber-200 transition-colors">
                     {item.title}
                   </h3>
                   <div className="flex items-center space-x-4 text-sm text-white/80">

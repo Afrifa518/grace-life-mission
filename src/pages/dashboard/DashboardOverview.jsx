@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mic, Calendar, Image, Users, TrendingUp, Eye, Download, Heart } from 'lucide-react';
+import { Mic, Calendar, Image, Eye, Download, Heart } from 'lucide-react';
 import StatsCard from '@/components/dashboard/StatsCard';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/components/ui/use-toast';
@@ -10,6 +11,7 @@ const DashboardOverview = () => {
   const [events, setEvents] = useState([]);
   const [gallery, setGallery] = useState([]);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,8 +52,8 @@ const DashboardOverview = () => {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
-        <p className="text-gray-600">Welcome back! Here's what's happening with your content.</p>
+        <h2 className="text-3xl font-bold text-foreground mb-2">Dashboard Overview</h2>
+        <p className="text-muted-foreground">Welcome back! Here's what's happening with your content.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -89,21 +91,21 @@ const DashboardOverview = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+          className="bg-card/60 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/20 border border-border/60 p-6"
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Recent Activity</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-6">Recent Activity</h3>
           {recentActivity.length === 0 ? (
-            <p className="text-sm text-gray-500">No recent activity yet.</p>
+            <p className="text-sm text-muted-foreground">No recent activity yet.</p>
           ) : (
           <div className="space-y-4">
             {recentActivity.map((activity, index) => (
               <div key={index} className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <activity.icon className="w-4 h-4 text-blue-600" />
+                <div className="w-9 h-9 bg-primary/15 rounded-xl flex items-center justify-center border border-primary/20">
+                  <activity.icon className="w-4 h-4 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">{activity.title}</p>
-                    <p className="text-xs text-gray-500">{new Date(activity.time).toLocaleString()}</p>
+                  <p className="text-sm font-medium text-foreground">{activity.title}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(activity.time).toLocaleString()}</p>
                 </div>
               </div>
             ))}
@@ -115,30 +117,30 @@ const DashboardOverview = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+          className="bg-card/60 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/20 border border-border/60 p-6"
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Content Performance</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-6">Content Performance</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Eye className="w-5 h-5 text-blue-600" />
-                <span className="text-sm font-medium text-gray-900">Total Views</span>
+                <Eye className="w-5 h-5 text-sky-400" />
+                <span className="text-sm font-medium text-foreground">Total Views</span>
               </div>
-              <span className="text-sm font-bold text-gray-900">{totalViews.toLocaleString()}</span>
+              <span className="text-sm font-bold text-foreground">{totalViews.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Download className="w-5 h-5 text-green-600" />
-                <span className="text-sm font-medium text-gray-900">Total Downloads</span>
+                <Download className="w-5 h-5 text-emerald-400" />
+                <span className="text-sm font-medium text-foreground">Total Downloads</span>
               </div>
-              <span className="text-sm font-bold text-gray-900">{totalDownloads.toLocaleString()}</span>
+              <span className="text-sm font-bold text-foreground">{totalDownloads.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Heart className="w-5 h-5 text-red-600" />
-                <span className="text-sm font-medium text-gray-900">Engagement Rate</span>
+                <Heart className="w-5 h-5 text-rose-400" />
+                <span className="text-sm font-medium text-foreground">Engagement Rate</span>
               </div>
-              <span className="text-sm font-bold text-gray-900">{sermons.length > 0 ? '87%' : '—'}</span>
+              <span className="text-sm font-bold text-foreground">{sermons.length > 0 ? '87%' : '—'}</span>
             </div>
           </div>
         </motion.div>
@@ -148,21 +150,54 @@ const DashboardOverview = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+        className="bg-card/60 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/20 border border-border/60 p-6"
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Quick Actions</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-6">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors duration-200 text-center">
-            <Mic className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-sm font-medium text-gray-600">Add New Sermon</p>
+          <button
+            onClick={() => navigate('/dashboard/sermons')}
+            className="p-5 border border-border/60 rounded-2xl bg-background/40 hover:bg-accent/30 transition-colors duration-200 text-left"
+            type="button"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center">
+                <Mic className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Add New Sermon</p>
+                <p className="text-xs text-muted-foreground">Upload YouTube link and details</p>
+              </div>
+            </div>
           </button>
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors duration-200 text-center">
-            <Calendar className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-sm font-medium text-gray-600">Create Event</p>
+          <button
+            onClick={() => navigate('/dashboard/events')}
+            className="p-5 border border-border/60 rounded-2xl bg-background/40 hover:bg-accent/30 transition-colors duration-200 text-left"
+            type="button"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Create Event</p>
+                <p className="text-xs text-muted-foreground">Add date, location, and schedule</p>
+              </div>
+            </div>
           </button>
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors duration-200 text-center">
-            <Image className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-sm font-medium text-gray-600">Upload Photos</p>
+          <button
+            onClick={() => navigate('/dashboard/gallery')}
+            className="p-5 border border-border/60 rounded-2xl bg-background/40 hover:bg-accent/30 transition-colors duration-200 text-left"
+            type="button"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center">
+                <Image className="w-5 h-5 text-indigo-300" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Upload Media</p>
+                <p className="text-xs text-muted-foreground">Photos or YouTube videos</p>
+              </div>
+            </div>
           </button>
         </div>
       </motion.div>

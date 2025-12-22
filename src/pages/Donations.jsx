@@ -109,7 +109,7 @@ const Donations = () => {
           <img  
             className="w-full h-full object-cover opacity-20" 
             alt="Hands giving offering in church service"
-           src={images?.donationsHeroUrl || 'https://images.unsplash.com/photo-1662045468936-47364448771e'} />
+           src={images?.donationsHeroUrl || '/sunday.jpeg'} />
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -487,7 +487,7 @@ const Donations = () => {
                 <img  
                   className="w-16 h-16 object-cover rounded-full mr-4" 
                   alt="Church member testimonial"
-                 src="https://images.unsplash.com/photo-1562445735-e2c006ba31aa" />
+                 src="/sunday.jpeg" />
                 <div>
                   <h4 className="font-semibold text-gray-900">Sarah & Mike Johnson</h4>
                   <p className="text-gray-600">Church Members since 2018</p>
@@ -511,7 +511,7 @@ const Donations = () => {
                 <img  
                   className="w-16 h-16 object-cover rounded-full mr-4" 
                   alt="Church member testimonial"
-                 src="https://images.unsplash.com/photo-1551677629-c3e314ecf29c" />
+                 src="/sunday.jpeg" />
                 <div>
                   <h4 className="font-semibold text-gray-900">Robert Williams</h4>
                   <p className="text-gray-600">Faithful Tither for 25+ years</p>

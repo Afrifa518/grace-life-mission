@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Users, Calendar } from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import DataTable from '@/components/dashboard/DataTable';
-import { supabase } from '@/lib/supabase';
 import Modal from '@/components/dashboard/Modal';
-import MinistryForm from '@/components/dashboard/MinistryForm';
+import StaffForm from '@/components/dashboard/StaffForm';
+import { supabase } from '@/lib/supabase';
 
-const MinistriesManagement = () => {
+const StaffManagement = () => {
   const { toast } = useToast();
-  const [ministries, setMinistries] = useState([]);
+  const [staff, setStaff] = useState([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
@@ -21,12 +21,7 @@ const MinistriesManagement = () => {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(false);
 
-  const handleAddNew = () => {
-    setEditing(null);
-    setOpen(true);
-  };
-
-  const fetchMinistries = async () => {
+  const fetchStaff = async () => {
     if (!supabase) return;
     setLoading(true);
     try {
@@ -34,90 +29,91 @@ const MinistriesManagement = () => {
       const to = from + pageSize - 1;
 
       let query = supabase
-        .from('ministries')
+        .from('staff_members')
         .select('*', { count: 'exact' })
         .order('order', { ascending: true })
-        .order('title', { ascending: true });
+        .order('name', { ascending: true });
 
       if (search) {
-        query = query.or(`title.ilike.%${search}%,leader.ilike.%${search}%`);
+        query = query.or(`name.ilike.%${search}%,role.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
       }
 
       if (filter && filter !== 'all') {
-        query = query.eq('status', filter);
+        if (filter === 'published' || filter === 'draft') {
+          query = query.eq('status', filter);
+        }
       }
 
       const { data, error, count } = await query.range(from, to);
       if (error) throw error;
-      setMinistries(data || []);
+
+      setStaff(data || []);
       setTotal(count || 0);
     } catch (err) {
-      toast({ title: 'Error fetching ministries', description: err.message, variant: 'destructive' });
+      toast({ title: 'Error fetching staff', description: err.message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchMinistries();
+    fetchStaff();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize, search, filter]);
 
-  const handleEdit = (ministry) => {
-    setEditing(ministry);
+  const handleAddNew = () => {
+    setEditing(null);
     setOpen(true);
   };
 
-  const handleDelete = async (ministryToDelete) => {
+  const handleEdit = (item) => {
+    setEditing(item);
+    setOpen(true);
+  };
+
+  const handleDelete = async (item) => {
     if (!supabase) return;
-    const { error } = await supabase.from('ministries').delete().eq('id', ministryToDelete.id);
-    if (error) {
-      toast({ title: 'Error deleting ministry', description: error.message, variant: 'destructive' });
-    } else {
-      toast({ title: 'Ministry Deleted', description: `"${ministryToDelete.title}" has been removed.` });
-      fetchMinistries();
+    try {
+      const { data, error } = await supabase
+        .from('staff_members')
+        .delete()
+        .eq('id', item.id)
+        .select('id')
+        .single();
+
+      if (error) throw error;
+      if (!data) throw new Error('Delete did not affect any rows. Check RLS policies and ID.');
+
+      toast({ title: 'Staff Deleted', description: `"${item.name}" has been removed.` });
+      fetchStaff();
+    } catch (err) {
+      toast({ title: 'Error deleting staff', description: err.message, variant: 'destructive' });
     }
   };
 
-  const handleView = (ministry) => {
-    toast({
-      title: '🚧 View Feature Coming Soon!',
-      description: "Still working on Feature",
-    });
-  };
-
-
   const columns = [
     {
-      key: 'title',
-      label: 'Ministry',
+      key: 'name',
+      label: 'Name',
       render: (value, item) => (
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-muted/40 rounded-xl flex items-center justify-center border border-border/60">
-            <Users className="w-5 h-5 text-muted-foreground" />
-          </div>
-          <div>
-            <p className="font-medium text-foreground">{value}</p>
-            <p className="text-xs text-muted-foreground">{item.subtitle}</p>
-          </div>
+        <div className="max-w-xs">
+          <p className="font-medium text-foreground truncate">{value}</p>
+          <p className="text-xs text-muted-foreground truncate">{item.role || '—'}</p>
         </div>
       )
     },
     {
-      key: 'leader',
-      label: 'Leader',
+      key: 'email',
+      label: 'Email',
       render: (value) => (
         <span className="text-sm text-muted-foreground">{value || '—'}</span>
       )
     },
     {
-      key: 'meetingTime',
-      label: 'Meets',
+      key: 'phone',
+      label: 'Phone',
       render: (value) => (
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <Calendar className="w-4 h-4 text-muted-foreground" />
-          <span>{value || '—'}</span>
-        </div>
+        <span className="text-sm text-muted-foreground">{value || '—'}</span>
       )
     },
     {
@@ -133,6 +129,13 @@ const MinistriesManagement = () => {
         </span>
       )
     },
+    {
+      key: 'order',
+      label: 'Order',
+      render: (value) => (
+        <span className="text-sm text-muted-foreground">{typeof value === 'number' ? value : '—'}</span>
+      )
+    }
   ];
 
   const filterOptions = [
@@ -144,26 +147,31 @@ const MinistriesManagement = () => {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-foreground">Ministries Management</h2>
-          <p className="text-muted-foreground mt-2">Create and manage church ministries.</p>
+          <h2 className="text-3xl font-bold text-foreground">Staff</h2>
+          <p className="text-muted-foreground mt-2">Manage staff members shown on the Contact page.</p>
         </div>
-        <Button 
+        <Button
           onClick={handleAddNew}
           className="shadow-lg shadow-black/20"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Add New Ministry
+          Add Staff
         </Button>
       </div>
 
+      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        <Users className="w-4 h-4" />
+        <span>Tip: Use status “Published” to show on the public site.</span>
+      </div>
+
       <DataTable
-        data={ministries}
+        data={staff}
         columns={columns}
-        title="All Ministries"
+        title="All Staff"
         onEdit={handleEdit}
         onDelete={handleDelete}
-        onView={handleView}
-        searchPlaceholder="Search ministries..."
+        onView={undefined}
+        searchPlaceholder="Search staff..."
         filterOptions={filterOptions}
         serverMode
         total={total}
@@ -177,15 +185,15 @@ const MinistriesManagement = () => {
         isLoading={loading}
       />
 
-      <Modal open={open} title={editing ? 'Edit Ministry' : 'Add Ministry'} onClose={() => setOpen(false)}>
-        <MinistryForm
+      <Modal open={open} title={editing ? 'Edit Staff' : 'Add Staff'} onClose={() => setOpen(false)}>
+        <StaffForm
           initialData={editing}
           onCancel={() => setOpen(false)}
-          onSaved={async () => { setOpen(false); await fetchMinistries(); }}
+          onSaved={async () => { setOpen(false); await fetchStaff(); }}
         />
       </Modal>
     </div>
   );
 };
 
-export default MinistriesManagement; 
+export default StaffManagement;

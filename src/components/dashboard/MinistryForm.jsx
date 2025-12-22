@@ -88,50 +88,50 @@ const MinistryForm = ({ initialData, onCancel, onSaved }) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-          <input name="title" value={form.title} onChange={updateField} required className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Title</label>
+          <input name="title" value={form.title} onChange={updateField} required className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
-          <input name="subtitle" value={form.subtitle} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Subtitle</label>
+          <input name="subtitle" value={form.subtitle} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Leader</label>
-          <input name="leader" value={form.leader} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Leader</label>
+          <input name="leader" value={form.leader} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Meeting Time</label>
-          <input name="meetingTime" value={form.meetingTime} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Meeting Time</label>
+          <input name="meetingTime" value={form.meetingTime} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Color Gradient (Tailwind)</label>
-          <input name="color" value={form.color} onChange={updateField} placeholder="from-blue-600 to-purple-600" className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Color Gradient (Tailwind)</label>
+          <input name="color" value={form.color} onChange={updateField} placeholder="from-blue-600 to-purple-600" className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-          <select name="status" value={form.status} onChange={updateField} className="w-full px-3 py-2 border rounded-lg">
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Status</label>
+          <select name="status" value={form.status} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent">
             <option value="published">Published</option>
             <option value="draft">Draft</option>
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Order</label>
-          <input type="number" name="order" value={form.order} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Order</label>
+          <input type="number" name="order" value={form.order} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image (optional)</label>
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Cover Image (optional)</label>
           <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full" />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-        <textarea name="description" value={form.description} onChange={updateField} rows={4} className="w-full px-3 py-2 border rounded-lg" />
+        <label className="block text-sm font-medium text-foreground/80 mb-2">Description</label>
+        <textarea name="description" value={form.description} onChange={updateField} rows={4} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Features (comma-separated)</label>
-        <input name="features" value={form.features} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
+        <label className="block text-sm font-medium text-foreground/80 mb-2">Features (comma-separated)</label>
+        <input name="features" value={form.features} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
       </div>
 
       <div className="flex justify-end gap-2">

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Play, Download, Eye } from 'lucide-react';
+import { Plus, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import DataTable from '@/components/dashboard/DataTable';
-import { sermonCategories } from '@/data/sermonsData';
 import { supabase } from '@/lib/supabase';
 import Modal from '@/components/dashboard/Modal';
 import SermonForm from '@/components/dashboard/SermonForm';
@@ -96,7 +94,7 @@ const SermonsManagement = () => {
       label: 'Title',
       render: (value) => (
         <div className="max-w-xs">
-          <p className="font-medium text-gray-900 truncate">{value}</p>
+          <p className="font-medium text-foreground truncate">{value}</p>
         </div>
       )
     },
@@ -104,14 +102,14 @@ const SermonsManagement = () => {
       key: 'speaker',
       label: 'Speaker',
       render: (value) => (
-        <span className="text-sm text-gray-600">{value}</span>
+        <span className="text-sm text-muted-foreground">{value}</span>
       )
     },
     {
       key: 'date',
       label: 'Date',
       render: (value) => (
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-muted-foreground">
           {new Date(value).toLocaleDateString()}
         </span>
       )
@@ -120,10 +118,10 @@ const SermonsManagement = () => {
       key: 'status',
       label: 'Status',
       render: (value) => (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
           value === 'published' 
-            ? 'bg-green-100 text-green-800' 
-            : 'bg-yellow-100 text-yellow-800'
+            ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20' 
+            : 'bg-amber-500/15 text-amber-300 border-amber-500/20'
         }`}>
           {value}
         </span>
@@ -134,8 +132,8 @@ const SermonsManagement = () => {
       label: 'Views',
       render: (value) => (
         <div className="flex items-center space-x-1">
-          <Eye className="w-4 h-4 text-gray-400" />
-          <span className="text-sm text-gray-600">{value || 0}</span>
+          <Eye className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">{value || 0}</span>
         </div>
       )
     }
@@ -150,12 +148,12 @@ const SermonsManagement = () => {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Sermons Management</h2>
-          <p className="text-gray-600 mt-2">Manage your sermon library and audio/video content.</p>
+          <h2 className="text-3xl font-bold text-foreground">Sermons Management</h2>
+          <p className="text-muted-foreground mt-2">Manage your sermon library and audio/video content.</p>
         </div>
         <Button 
           onClick={handleAddNew}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+          className="shadow-lg shadow-black/20"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add New Sermon
@@ -194,48 +192,50 @@ const SermonsManagement = () => {
       {viewing && (
         <Modal open={true} title={viewing.title} onClose={() => setViewing(null)}>
           <div className="space-y-4">
-            <div className="relative w-full h-56 rounded-xl overflow-hidden bg-gray-100">
+            <div className="relative w-full h-56 rounded-xl overflow-hidden bg-muted/40">
               <img
-                src={viewing.imageUrl || 'https://images.unsplash.com/photo-1573604253901-67bdb250d078'}
+                src={viewing.imageUrl || '/sunday.jpeg'}
                 alt={viewing.title}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
               <div>
-                <span className="font-medium text-gray-900">Speaker:</span>
+                <span className="font-medium text-foreground">Speaker:</span>
                 <div>{viewing.speaker || '—'}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Date:</span>
+                <span className="font-medium text-foreground">Date:</span>
                 <div>{viewing.date ? new Date(viewing.date).toLocaleDateString() : '—'}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Duration:</span>
+                <span className="font-medium text-foreground">Duration:</span>
                 <div>{viewing.duration || '—'}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Category:</span>
+                <span className="font-medium text-foreground">Category:</span>
                 <div>{viewing.category || '—'}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Status:</span>
-                <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  viewing.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                <span className="font-medium text-foreground">Status:</span>
+                <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                  viewing.status === 'published'
+                    ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20'
+                    : 'bg-amber-500/15 text-amber-300 border-amber-500/20'
                 }`}>{viewing.status}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">YouTube:</span>
+                <span className="font-medium text-foreground">YouTube:</span>
                 <div>
                   {viewing.youtubeUrl ? (
-                    <a href={viewing.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Open link</a>
+                    <a href={viewing.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Open link</a>
                   ) : '—'}
                 </div>
               </div>
             </div>
             <div>
-              <span className="font-medium text-gray-900">Description:</span>
-              <p className="mt-1 text-gray-700 whitespace-pre-line">{viewing.description || '—'}</p>
+              <span className="font-medium text-foreground">Description:</span>
+              <p className="mt-1 text-muted-foreground whitespace-pre-line">{viewing.description || '—'}</p>
             </div>
             <div className="flex justify-end">
               <Button variant="outline" onClick={() => setViewing(null)}>Close</Button>

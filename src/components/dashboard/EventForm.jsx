@@ -83,14 +83,20 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
     try {
       const payload = { ...form };
 
-      // Normalize schedule: remove empty entries
-      const cleanedSchedule = (payload.schedule || []).filter(s => (s.date && s.time));
+      const cleanedSchedule = (payload.schedule || [])
+        .filter((s) => !!s?.date)
+        .map((s) => ({ date: s.date, time: s.time || '' }));
       payload.schedule = cleanedSchedule;
+
+      if (!cleanedSchedule.length && !payload.date) {
+        toast({ title: 'Schedule required', description: 'Please add at least one schedule date before saving.', variant: 'destructive' });
+        return;
+      }
 
       // Mirror first schedule to legacy date/time for compatibility
       if (cleanedSchedule.length > 0) {
         payload.date = cleanedSchedule[0].date;
-        payload.time = cleanedSchedule[0].time;
+        payload.time = cleanedSchedule[0].time || '';
       }
 
       if (imageFile) {
@@ -122,50 +128,50 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-          <input name="title" value={form.title} onChange={updateField} required className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Title</label>
+          <input name="title" value={form.title} onChange={updateField} required className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-          <input name="location" value={form.location} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Location</label>
+          <input name="location" value={form.location} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-          <select name="category" value={form.category} onChange={updateField} className="w-full px-3 py-2 border rounded-lg">
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Category</label>
+          <select name="category" value={form.category} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent">
             {eventCategories.map(c => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Recurring</label>
-          <input name="recurring" placeholder="e.g. Weekly, Monthly" value={form.recurring} onChange={updateField} className="w-full px-3 py-2 border rounded-lg" />
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Recurring</label>
+          <input name="recurring" placeholder="e.g. Weekly, Monthly" value={form.recurring} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-          <select name="status" value={form.status} onChange={updateField} className="w-full px-3 py-2 border rounded-lg">
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Status</label>
+          <select name="status" value={form.status} onChange={updateField} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent">
             <option value="draft">Draft</option>
             <option value="published">Published</option>
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Banner Image (optional)</label>
+          <label className="block text-sm font-medium text-foreground/80 mb-2">Banner Image (optional)</label>
           <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full" />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Schedule (one or more days)</label>
+        <label className="block text-sm font-medium text-foreground/80 mb-2">Schedule (one or more days)</label>
         <div className="space-y-3">
           {(form.schedule || []).map((slot, idx) => (
             <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Date</label>
-                <input type="date" value={slot.date} onChange={(e) => updateSchedule(idx, 'date', e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
+                <label className="block text-xs text-muted-foreground mb-1">Date</label>
+                <input type="date" value={slot.date} onChange={(e) => updateSchedule(idx, 'date', e.target.value)} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Time</label>
-                <input value={slot.time} onChange={(e) => updateSchedule(idx, 'time', e.target.value)} placeholder="e.g. 10:00 AM - 12:00 PM" className="w-full px-3 py-2 border rounded-lg" />
+                <label className="block text-xs text-muted-foreground mb-1">Time</label>
+                <input value={slot.time} onChange={(e) => updateSchedule(idx, 'time', e.target.value)} placeholder="e.g. 10:00 AM - 12:00 PM" className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
               </div>
               <div className="flex gap-2">
                 <Button type="button" variant="outline" onClick={() => removeScheduleItem(idx)}>Remove</Button>
@@ -177,8 +183,8 @@ const EventForm = ({ initialData, onCancel, onSaved }) => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-        <textarea name="description" value={form.description} onChange={updateField} rows={4} className="w-full px-3 py-2 border rounded-lg" />
+        <label className="block text-sm font-medium text-foreground/80 mb-2">Description</label>
+        <textarea name="description" value={form.description} onChange={updateField} rows={4} className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
       </div>
 
       <div className="flex justify-end gap-2">

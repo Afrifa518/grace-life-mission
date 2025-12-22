@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useToast } from '@/components/ui/use-toast';
-import { Button } from '@/components/ui/button';
 import EventsHero from '@/components/events/EventsHero';
 import EventsFilter from '@/components/events/EventsFilter';
 import FeaturedEvent from '@/components/events/FeaturedEvent';
 import EventsGrid from '@/components/events/EventsGrid';
+import Modal from '@/components/dashboard/Modal';
+import RSVPForm from '@/components/registrations/RSVPForm';
 import { supabase } from '@/lib/supabase';
 
 const Events = () => {
@@ -14,11 +15,30 @@ const Events = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const handleRSVP = (eventTitle) => {
-    toast({
-      title: "🚧 RSVP Feature Coming Soon!",
-      description: "Still working on Feature",
-    });
+  const parseEventDate = (value) => {
+    if (!value) return null;
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      const d = new Date(`${value}T00:00:00`);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  };
+
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+  const [rsvpOpen, setRsvpOpen] = useState(false);
+  const [rsvpEvent, setRsvpEvent] = useState(null);
+
+  const closeRSVP = () => {
+    setRsvpOpen(false);
+    setRsvpEvent(null);
+  };
+
+  const handleRSVP = (event) => {
+    if (!event) return;
+    setRsvpEvent(event);
+    setRsvpOpen(true);
   };
 
   useEffect(() => {
@@ -29,11 +49,12 @@ const Events = () => {
         const { data, error } = await supabase
           .from('events')
           .select('*')
+          .eq('status', 'published')
           .order('date', { ascending: true });
         if (error) throw error;
         setEvents(data || []);
       } catch (err) {
-        console.error(err);
+        toast({ title: 'Error loading events', description: err.message, variant: 'destructive' });
       } finally {
         setLoading(false);
       }
@@ -49,23 +70,35 @@ const Events = () => {
   const filteredEvents = (events || []).filter(event => 
     (selectedCategory === 'All' || event.category === selectedCategory)
     && event.status === 'published'
-    && new Date((event.schedule && event.schedule[0]?.date) || event.date) >= new Date()
-  ).sort((a, b) => new Date((a.schedule && a.schedule[0]?.date) || a.date) - new Date((b.schedule && b.schedule[0]?.date) || b.date));
+    && (() => {
+      const raw = (event.schedule && event.schedule[0]?.date) || event.date;
+      const d = parseEventDate(raw);
+      if (!d) return false;
+      return startOfDay(d) >= startOfDay(new Date());
+    })()
+  ).sort((a, b) => {
+    const ad = parseEventDate((a.schedule && a.schedule[0]?.date) || a.date);
+    const bd = parseEventDate((b.schedule && b.schedule[0]?.date) || b.date);
+    if (!ad && !bd) return 0;
+    if (!ad) return 1;
+    if (!bd) return -1;
+    return ad - bd;
+  });
 
   const featuredEvent = filteredEvents.find(event => event.category === 'Special') || filteredEvents[0];
 
   const getCategoryColor = (category) => {
     const colors = {
-      'Worship': 'from-blue-500 to-blue-600',
-      'Youth': 'from-green-500 to-green-600',
-      'Bible Study': 'from-purple-500 to-purple-600',
-      'Fellowship': 'from-orange-500 to-orange-600',
-      'Outreach': 'from-red-500 to-red-600',
-      'Special': 'from-pink-500 to-pink-600',
-      'Prayer': 'from-indigo-500 to-indigo-600',
-      'Seminar': 'from-teal-500 to-teal-600'
+      'Worship': 'from-primary to-amber-700',
+      'Youth': 'from-emerald-700 to-emerald-500',
+      'Bible Study': 'from-amber-700 to-amber-500',
+      'Fellowship': 'from-amber-600 to-primary',
+      'Outreach': 'from-primary to-emerald-600',
+      'Special': 'from-emerald-800 to-amber-600',
+      'Prayer': 'from-primary to-emerald-700',
+      'Seminar': 'from-amber-800 to-primary'
     };
-    return colors[category] || 'from-gray-500 to-gray-600';
+    return colors[category] || 'from-emerald-800 to-amber-700';
   };
 
   return (
@@ -93,6 +126,10 @@ const Events = () => {
           getCategoryColor={getCategoryColor} 
         />
       )}
+
+      <Modal open={rsvpOpen} title={`RSVP: ${rsvpEvent?.title || ''}`} onClose={closeRSVP}>
+        <RSVPForm event={rsvpEvent} onCancel={closeRSVP} onSaved={closeRSVP} />
+      </Modal>
     </>
   );
 };

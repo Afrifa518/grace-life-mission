@@ -42,11 +42,12 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative overflow-hidden bg-gray-900 text-white">
+    <footer className="relative overflow-hidden bg-foreground text-background">
       {/* Background image */}
-      <div className="absolute inset-0 pointer-events-none opacity-20">
+      <div className="absolute inset-0 pointer-events-none opacity-15">
         <img src={images?.footerBackgroundUrl || '/sunday.jpeg'} alt="" aria-hidden="true" className="w-full h-full object-cover" />
       </div>
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-foreground/30 via-foreground/70 to-foreground" />
       <div className="relative z-10">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -54,15 +55,15 @@ const Footer = () => {
           {/* Church Info */}
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-amber-700 rounded-xl flex items-center justify-center shadow-sm shadow-black/20">
                 <span className="text-white font-bold text-xl">G</span>
               </div>
               <div>
                 <span className="font-display font-bold text-xl">GraceLife Mission</span>
-                <p className="text-sm text-gray-400">International</p>
+                <p className="text-sm text-background/70">International</p>
               </div>
             </div>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-background/80 leading-relaxed">
               A Christ-centered church focused on spreading the Gospel and building a strong faith community through worship, fellowship, and service.
             </p>
             <div className="flex space-x-4">
@@ -72,7 +73,7 @@ const Footer = () => {
                   href={social.href}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors duration-300"
+                  className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-300"
                   aria-label={social.label}
                 >
                   <social.icon size={18} />
@@ -89,9 +90,9 @@ const Footer = () => {
                 <li key={link.name}>
                   <Link
                     to={link.path}
-                    className="text-gray-300 hover:text-white transition-colors duration-200 flex items-center group"
+                    className="text-background/80 hover:text-background transition-colors duration-200 flex items-center group"
                   >
-                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                    <span className="w-2 h-2 bg-amber-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                     {link.name}
                   </Link>
                 </li>
@@ -107,9 +108,9 @@ const Footer = () => {
                 <li key={ministry.name}>
                   <Link
                     to={ministry.path}
-                    className="text-gray-300 hover:text-white transition-colors duration-200 flex items-center group"
+                    className="text-background/80 hover:text-background transition-colors duration-200 flex items-center group"
                   >
-                    <span className="w-2 h-2 bg-purple-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                    <span className="w-2 h-2 bg-primary rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                     {ministry.name}
                   </Link>
                 </li>
@@ -122,28 +123,28 @@ const Footer = () => {
             <span className="font-semibold text-lg mb-6 block">Contact Info</span>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
+                <MapPin className="w-5 h-5 text-amber-600 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-gray-300">Pomakrom, Oppsite VRA Quaters</p>
-                  <p className="text-gray-300">Techiman BE, Ghana</p>
+                  <p className="text-background/80">Pomakrom, Oppsite VRA Quaters</p>
+                  <p className="text-background/80">Techiman BE, Ghana</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <p className="text-gray-300">+233505983499</p>
-                <p className="text-gray-300">+233244892719</p>
+                <Phone className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <p className="text-background/80">+233505983499</p>
+                <p className="text-background/80">+233244892719</p>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <p className="text-gray-300">info@gracelifemission.org</p>
+                <Mail className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <p className="text-background/80">info@gracelifemission.org</p>
               </div>
-              <div className="mt-6 p-4 bg-gray-800 rounded-lg">
+              <div className="mt-6 p-4 bg-white/10 rounded-xl border border-white/10">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Clock className="w-4 h-4 text-blue-600" />
+                  <Clock className="w-4 h-4 text-amber-600" />
                   <span className="font-medium text-sm">Service Times</span>
                 </div>
-                <p className="text-sm text-gray-300">Sunday: 8:00 AM & 11:00 AM</p>
-                <p className="text-sm text-gray-300">Friday: 7:00 PM</p>
+                <p className="text-sm text-background/80">Sunday: 8:00 AM & 11:00 AM</p>
+                <p className="text-sm text-background/80">Friday: 7:00 PM</p>
               </div>
             </div>
           </div>
@@ -151,13 +152,13 @@ const Footer = () => {
       </div>
 
       {/* Bottom Footer */}
-      <div className="border-t border-gray-800">
+      <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-400 text-sm text-center md:text-left">
+            <p className="text-background/60 text-sm text-center md:text-left">
               © 2025 GraceLife Mission International. All rights reserved.
             </p>
-            <div className="flex items-center space-x-1 text-sm text-gray-400">
+            <div className="flex items-center space-x-1 text-sm text-background/60">
               <span>Built By</span>
               <span>GraceLife Media Team</span>
             </div>

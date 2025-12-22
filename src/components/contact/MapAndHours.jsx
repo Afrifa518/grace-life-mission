@@ -1,12 +1,68 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { MapPin, Clock } from 'lucide-react';
-import { serviceHours } from '@/data/contactData';
+import { supabase } from '@/lib/supabase';
+
+const FALLBACK_CHURCH_INFO = {
+  address_line1: 'Pomakrom, Oppsite VRA Quaters',
+  address_line2: 'Techiman BE, Ghana',
+  map_url: null,
+};
 
 const MapAndHours = () => {
   const { toast } = useToast();
+  const [churchInfo, setChurchInfo] = useState(null);
+  const [serviceTimes, setServiceTimes] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!supabase) {
+        setChurchInfo(FALLBACK_CHURCH_INFO);
+        setServiceTimes([]);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const [infoRes, timesRes] = await Promise.all([
+          supabase
+            .from('church_info')
+            .select('*')
+            .eq('slug', 'default')
+            .limit(1),
+          supabase
+            .from('service_times')
+            .select('*')
+            .eq('status', 'published')
+            .order('order', { ascending: true })
+            .order('day', { ascending: true }),
+        ]);
+
+        if (infoRes.error) throw infoRes.error;
+        if (timesRes.error) throw timesRes.error;
+
+        setChurchInfo((infoRes.data && infoRes.data[0]) || FALLBACK_CHURCH_INFO);
+        setServiceTimes(timesRes.data || []);
+      } catch {
+        setChurchInfo(FALLBACK_CHURCH_INFO);
+        setServiceTimes([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const addressText = useMemo(() => {
+    const info = churchInfo || FALLBACK_CHURCH_INFO;
+    return [info.address_line1, info.address_line2].filter(Boolean).join(', ');
+  }, [churchInfo]);
+
+  const mapUrl = (churchInfo?.map_url || FALLBACK_CHURCH_INFO.map_url) || '';
 
   return (
     <motion.div
@@ -16,18 +72,24 @@ const MapAndHours = () => {
       viewport={{ once: true }}
       className="space-y-8"
     >
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div className="h-64 bg-gray-200 flex items-center justify-center">
+      <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
+        <div className="h-64 bg-secondary/60 flex items-center justify-center">
           <div className="text-center">
-            <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h4 className="text-lg font-semibold text-gray-700 mb-2">Interactive Map</h4>
-            <p className="text-gray-500">Pomakrom, Oppsite VRA Quaters, Techiman BE, Ghana</p>
+            <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h4 className="text-lg font-semibold text-foreground mb-2">Interactive Map</h4>
+            <p className="text-muted-foreground">{addressText}</p>
             <Button 
-              onClick={() => toast({
-                title: "🚧 Interactive Map Coming Soon!",
-                description: "Still working on Feature",
-              })}
-              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+              onClick={() => {
+                if (mapUrl) {
+                  window.open(mapUrl, '_blank', 'noopener,noreferrer');
+                  return;
+                }
+                toast({
+                  title: "🚧 Interactive Map Coming Soon!",
+                  description: "Still working on Feature",
+                });
+              }}
+              className="mt-4 rounded-full px-6"
             >
               View on Map
             </Button>
@@ -35,25 +97,31 @@ const MapAndHours = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-xl p-8">
+      <div className="bg-card rounded-2xl shadow-sm border border-border p-8">
         <div className="flex items-center mb-6">
-          <Clock className="w-6 h-6 text-blue-600 mr-3" />
-          <h3 className="text-xl font-bold text-gray-900">Service Times & Hours</h3>
+          <Clock className="w-6 h-6 text-amber-700 mr-3" />
+          <h3 className="text-xl font-bold text-foreground">Service Times & Hours</h3>
         </div>
         <div className="space-y-4">
-          {serviceHours.map((schedule, index) => (
-            <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
+          {loading && (
+            <p className="text-muted-foreground">Loading service times...</p>
+          )}
+          {!loading && serviceTimes.length === 0 && (
+            <p className="text-muted-foreground">No service times published yet.</p>
+          )}
+          {!loading && serviceTimes.map((schedule, index) => (
+            <div key={schedule.id || index} className="flex justify-between items-center py-2 border-b border-border last:border-b-0">
               <div>
-                <div className="font-medium text-gray-900">{schedule.day}</div>
-                <div className="text-sm text-blue-600">{schedule.special}</div>
+                <div className="font-medium text-foreground">{schedule.day}</div>
+                <div className="text-sm text-primary">{schedule.special}</div>
               </div>
-              <div className="text-gray-600 text-right">{schedule.times}</div>
+              <div className="text-muted-foreground text-right">{schedule.times}</div>
             </div>
           ))}
         </div>
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <h4 className="font-semibold text-blue-900 mb-2">First Time Visitors</h4>
-          <p className="text-blue-700 text-sm">
+        <div className="mt-6 p-4 bg-accent/60 rounded-xl border border-border">
+          <h4 className="font-semibold text-foreground mb-2">First Time Visitors</h4>
+          <p className="text-muted-foreground text-sm">
             We'd love to meet you! Arrive 15 minutes early for a warm welcome and to help you find your way around.
           </p>
         </div>

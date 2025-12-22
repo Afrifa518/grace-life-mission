@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Plus, Image, Heart, Star, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -92,12 +91,12 @@ const GalleryManagement = () => {
       label: 'Title',
       render: (value, item) => (
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-            <Image className="w-6 h-6 text-gray-400" />
+          <div className="w-12 h-12 bg-muted/40 rounded-xl flex items-center justify-center border border-border/60">
+            <Image className="w-6 h-6 text-muted-foreground" />
           </div>
           <div>
-            <p className="font-medium text-gray-900">{value}</p>
-            <p className="text-xs text-gray-500">{item.type}</p>
+            <p className="font-medium text-foreground">{value}</p>
+            <p className="text-xs text-muted-foreground">{item.type}</p>
           </div>
         </div>
       )
@@ -107,8 +106,8 @@ const GalleryManagement = () => {
       label: 'Date',
       render: (value) => (
         <div className="flex items-center space-x-2">
-          <Calendar className="w-4 h-4 text-gray-400" />
-          <span className="text-sm text-gray-600">{value ? new Date(value).toLocaleDateString() : 'N/A'}</span>
+          <Calendar className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">{value ? new Date(value).toLocaleDateString() : 'N/A'}</span>
         </div>
       )
     },
@@ -118,11 +117,11 @@ const GalleryManagement = () => {
       render: (value) => (
         <div className="flex items-center space-x-2">
           {value === 'video' ? (
-            <Heart className="w-4 h-4 text-purple-600" />
+            <Heart className="w-4 h-4 text-indigo-300" />
           ) : (
-            <Star className="w-4 h-4 text-green-600" />
+            <Star className="w-4 h-4 text-emerald-400" />
           )}
-          <span className="text-sm text-gray-600 capitalize">{value}</span>
+          <span className="text-sm text-muted-foreground capitalize">{value}</span>
         </div>
       )
     }
@@ -150,12 +149,12 @@ const GalleryManagement = () => {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Gallery Management</h2>
-          <p className="text-gray-600 mt-2">Manage photos, testimonies, and visual content.</p>
+          <h2 className="text-3xl font-bold text-foreground">Gallery Management</h2>
+          <p className="text-muted-foreground mt-2">Manage photos, testimonies, and visual content.</p>
         </div>
         <Button 
           onClick={handleAddNew}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+          className="shadow-lg shadow-black/20"
         >
           <Plus className="w-4 h-4 mr-2" />
           Upload Content
@@ -194,7 +193,7 @@ const GalleryManagement = () => {
       {viewing && (
         <Modal open={true} title={viewing.title} onClose={() => setViewing(null)}>
           <div className="space-y-4">
-            <div className="relative w-full h-56 rounded-xl overflow-hidden bg-gray-100">
+            <div className="relative w-full h-56 rounded-xl overflow-hidden bg-muted/40">
               {viewing.type === 'video' && viewing.youtubeUrl ? (
                 <iframe
                   className="w-full h-full"
@@ -206,39 +205,41 @@ const GalleryManagement = () => {
                 />
               ) : (
                 <img
-                  src={viewing.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011'}
+                  src={viewing.imageUrl || '/sunday.jpeg'}
                   alt={viewing.title}
                   className="w-full h-full object-cover"
                 />
               )}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
               <div>
-                <span className="font-medium text-gray-900">Type:</span>
+                <span className="font-medium text-foreground">Type:</span>
                 <div className="capitalize">{viewing.type || '—'}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Date:</span>
+                <span className="font-medium text-foreground">Date:</span>
                 <div>{viewing.date ? new Date(viewing.date).toLocaleDateString() : '—'}</div>
               </div>
               <div>
-                <span className="font-medium text-gray-900">Status:</span>
-                <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  viewing.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                <span className="font-medium text-foreground">Status:</span>
+                <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                  viewing.status === 'published'
+                    ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20'
+                    : 'bg-amber-500/15 text-amber-300 border-amber-500/20'
                 }`}>{viewing.status}</div>
               </div>
               {viewing.type === 'video' && viewing.youtubeUrl && (
                 <div>
-                  <span className="font-medium text-gray-900">YouTube:</span>
+                  <span className="font-medium text-foreground">YouTube:</span>
                   <div>
-                    <a href={viewing.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Open link</a>
+                    <a href={viewing.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Open link</a>
                   </div>
                 </div>
               )}
             </div>
             <div>
-              <span className="font-medium text-gray-900">Description:</span>
-              <p className="mt-1 text-gray-700 whitespace-pre-line">{viewing.description || '—'}</p>
+              <span className="font-medium text-foreground">Description:</span>
+              <p className="mt-1 text-muted-foreground whitespace-pre-line">{viewing.description || '—'}</p>
             </div>
             <div className="flex justify-end">
               <Button variant="outline" onClick={() => setViewing(null)}>Close</Button>

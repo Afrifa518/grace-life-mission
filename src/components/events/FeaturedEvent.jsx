@@ -5,29 +5,29 @@ import { Button } from '@/components/ui/button';
 
 const FeaturedEvent = ({ event, onRSVP }) => {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 md:p-12"
+          className="bg-card/90 backdrop-blur-sm rounded-3xl border border-border p-8 md:p-12 shadow-sm"
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-block bg-pink-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <div className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-medium mb-4 border border-border">
                 Featured Event
               </div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
                 {event.title}
               </h2>
-              <div className="space-y-3 text-gray-600 mb-6">
+              <div className="space-y-3 text-muted-foreground mb-6">
                 {Array.isArray(event.schedule) && event.schedule.length > 0 ? (
                   <div className="space-y-2">
                     {event.schedule.map((s, i) => (
                       <div key={i} className="flex items-center space-x-3">
-                        <Calendar className="w-5 h-5 text-blue-600" />
+                        <Calendar className="w-5 h-5 text-amber-700" />
                         <span>{s.date ? new Date(s.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '—'}{s.time ? ` · ${s.time}` : ''}</span>
                       </div>
                     ))}
@@ -35,7 +35,7 @@ const FeaturedEvent = ({ event, onRSVP }) => {
                 ) : (
                   <>
                     <div className="flex items-center space-x-3">
-                      <Calendar className="w-5 h-5 text-blue-600" />
+                      <Calendar className="w-5 h-5 text-amber-700" />
                       <span>{new Date(event.date).toLocaleDateString('en-US', { 
                         weekday: 'long', 
                         year: 'numeric', 
@@ -44,29 +44,29 @@ const FeaturedEvent = ({ event, onRSVP }) => {
                       })}</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Clock className="w-5 h-5 text-blue-600" />
+                      <Clock className="w-5 h-5 text-amber-700" />
                       <span>{event.time}</span>
                     </div>
                   </>
                 )}
                 <div className="flex items-center space-x-3">
-                  <MapPin className="w-5 h-5 text-blue-600" />
+                  <MapPin className="w-5 h-5 text-amber-700" />
                   <span>{event.location}</span>
                 </div>
               </div>
-              <p className="text-gray-600 leading-relaxed mb-8">
+              <p className="text-muted-foreground leading-relaxed mb-8">
                 {event.description}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
-                  onClick={() => onRSVP(event.title)}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={() => onRSVP(event)}
+                  className="rounded-full px-8"
                 >
                   RSVP Now
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-3 rounded-lg font-medium transition-all duration-300"
+                  className="rounded-full px-8"
                 >
                   Add to Calendar
                 </Button>
@@ -74,9 +74,9 @@ const FeaturedEvent = ({ event, onRSVP }) => {
             </div>
             <div className="relative">
               <img  
-                className="w-full h-80 object-cover rounded-xl shadow-lg" 
+                className="w-full h-80 object-cover rounded-2xl shadow-lg" 
                 alt={event.title}
-                src={event.imageUrl || 'https://images.unsplash.com/photo-1640478650646-6797ed4acaca'} />
+                src={event.imageUrl || '/sunday.jpeg'} />
             </div>
           </div>
         </motion.div>

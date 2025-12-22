@@ -9,15 +9,15 @@ const ImageCard = ({ title, keyName, currentUrl, onUpload, onSetUrl }) => {
   const [urlInput, setUrlInput] = useState('');
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
+    <div className="bg-card/60 backdrop-blur-xl border border-border/60 rounded-2xl p-6 shadow-2xl shadow-black/20">
+      <h3 className="text-lg font-semibold text-foreground mb-4">{title}</h3>
       <div className="flex flex-col md:flex-row gap-6 items-start">
         <div className="w-full md:w-64">
-          <div className="aspect-video md:aspect-square w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+          <div className="aspect-video md:aspect-square w-full overflow-hidden rounded-xl border border-border/60 bg-muted/40">
             {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
             <img src={currentUrl} alt={`${title} preview`} className="w-full h-full object-contain" />
           </div>
-          <p className="text-xs text-gray-500 mt-2 break-all">{currentUrl}</p>
+          <p className="text-xs text-muted-foreground mt-2 break-all">{currentUrl}</p>
         </div>
         <div className="flex-1 w-full space-y-3">
           <div className="flex gap-2 items-center flex-wrap">
@@ -25,10 +25,10 @@ const ImageCard = ({ title, keyName, currentUrl, onUpload, onSetUrl }) => {
             <Button type="button" onClick={() => fileRef.current?.click()}>Upload new</Button>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Or set from URL</label>
+            <label className="block text-sm font-medium text-foreground/80 mb-2">Or set from URL</label>
             <div className="flex gap-2">
               <input
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                className="flex-1 px-4 py-3 border border-input/80 bg-background/60 text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent"
                 placeholder="https://..."
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
@@ -73,9 +73,9 @@ const SiteImages = () => {
       </Helmet>
 
       <div>
-        <h2 className="text-3xl font-bold text-gray-900">Site Images</h2>
-        <p className="text-gray-600 mt-2">Update global images used across the website. Changes apply immediately.</p>
-        {loading && <p className="text-sm text-gray-500 mt-2">Loading current configuration...</p>}
+        <h2 className="text-3xl font-bold text-foreground">Site Images</h2>
+        <p className="text-muted-foreground mt-2">Update global images used across the website. Changes apply immediately.</p>
+        {loading && <p className="text-sm text-muted-foreground mt-2">Loading current configuration...</p>}
       </div>
 
       <div className="grid grid-cols-1 gap-6">
@@ -120,7 +120,7 @@ const SiteImages = () => {
           onSetUrl={(url) => handleSetUrl('footerBackgroundUrl', url)} />
       </div>
 
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-muted-foreground">
         <p>Notes:</p>
         <ul className="list-disc ml-5 mt-1 space-y-1">
           <li>Images are stored in the Supabase Storage bucket <code>site/images</code>.</li>

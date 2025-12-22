@@ -5,12 +5,12 @@ import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 const EventsHero = () => {
   const { images } = useSiteConfigContext();
   return (
-    <section className="relative py-32 bg-gradient-to-r from-blue-600 to-purple-600 text-white overflow-hidden">
+    <section className="relative py-32 hero-gradient text-white overflow-hidden">
       <div className="absolute inset-0">
         <img  
           className="w-full h-full object-cover opacity-20" 
           alt="Church community gathering for special event"
-         src={images?.eventsHeroUrl || 'https://images.unsplash.com/photo-1563902244988-42d466e79b25'} />
+         src={images?.eventsHeroUrl || '/sunday.jpeg'} />
       </div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

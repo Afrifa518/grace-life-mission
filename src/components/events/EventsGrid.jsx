@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -14,10 +14,10 @@ const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
             Upcoming <span className="gradient-text">Events</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Mark your calendar and join us for these exciting upcoming events and gatherings.
           </p>
         </motion.div>
@@ -30,34 +30,42 @@ const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 card-hover"
+              className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-all duration-300 card-hover"
             >
               <div className="relative h-48">
                 <img  
                   className="w-full h-full object-cover" 
                   alt={event.title}
-                  src={event.imageUrl || 'https://images.unsplash.com/photo-1595872018818-97555653a011'} />
+                  src={event.imageUrl || '/sunday.jpeg'} />
                 <div className="absolute top-4 left-4">
                   <span className={`bg-gradient-to-r ${getCategoryColor(event.category)} text-white px-3 py-1 rounded-full text-xs font-medium`}>
                     {event.category}
                   </span>
                 </div>
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-center">
-                  <div className="text-lg font-bold text-gray-900">
-                    {new Date(event.date).getDate()}
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {new Date(event.date).toLocaleDateString('en-US', { month: 'short' })}
-                  </div>
+                <div className="absolute top-4 right-4 bg-background/80 backdrop-blur-sm rounded-xl p-2 text-center border border-border shadow-sm">
+                  {(() => {
+                    const dateValue = (event.schedule && event.schedule[0]?.date) || event.date;
+                    const d = dateValue ? new Date(dateValue) : null;
+                    return (
+                      <>
+                        <div className="text-lg font-bold text-foreground">
+                          {d ? d.getDate() : '—'}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {d ? d.toLocaleDateString('en-US', { month: 'short' }) : '—'}
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
               
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
+                <h3 className="text-xl font-semibold text-foreground mb-3 line-clamp-2">
                   {event.title}
                 </h3>
                 
-                <div className="space-y-2 text-sm text-gray-600 mb-4">
+                <div className="space-y-2 text-sm text-muted-foreground mb-4">
                   {Array.isArray(event.schedule) && event.schedule.length > 0 ? (
                     <div className="space-y-1">
                       {event.schedule.map((s, i) => (
@@ -87,13 +95,13 @@ const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
                   )}
                 </div>
                 
-                <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3">
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6 line-clamp-3">
                   {event.description}
                 </p>
                 
                 <Button 
-                  onClick={() => onRSVP(event.title)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors duration-300"
+                  onClick={() => onRSVP(event)}
+                  className="w-full rounded-full"
                 >
                   RSVP
                 </Button>
@@ -108,7 +116,7 @@ const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
             animate={{ opacity: 1 }}
             className="text-center py-12"
           >
-            <p className="text-gray-500 text-lg">No upcoming events in this category.</p>
+            <p className="text-muted-foreground text-lg">No upcoming events in this category.</p>
           </motion.div>
         )}
       </div>

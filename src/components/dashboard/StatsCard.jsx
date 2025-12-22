@@ -13,19 +13,22 @@ const StatsCard = ({ title, value, change, icon: Icon, color = "blue" }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+      transition={{ type: 'spring', stiffness: 160, damping: 18 }}
+      whileHover={{ y: -4, scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
+      className="bg-card/60 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/20 border border-border/60 p-6 transition-shadow duration-300 hover:shadow-black/30"
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="text-3xl font-bold text-foreground mt-2">{value}</p>
           {change && (
-            <p className={`text-sm mt-2 ${change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`text-sm mt-2 ${change.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'}`}>
               {change} from last month
             </p>
           )}
         </div>
-        <div className={`w-12 h-12 bg-gradient-to-br ${colorClasses[color]} rounded-lg flex items-center justify-center`}>
+        <div className={`w-12 h-12 bg-gradient-to-br ${colorClasses[color]} rounded-xl flex items-center justify-center shadow-lg shadow-black/25`}>
           <Icon className="w-6 h-6 text-white" />
         </div>
       </div>

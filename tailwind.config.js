@@ -16,6 +16,10 @@ module.exports = {
 			},
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Poppins', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+				display: ['Playfair Display', 'Poppins', 'ui-serif', 'Georgia', 'serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -57,6 +61,18 @@ module.exports = {
 				sm: 'calc(var(--radius) - 4px)',
 			},
 			keyframes: {
+				'fade-in': {
+					from: { opacity: 0 },
+					to: { opacity: 1 },
+				},
+				'fade-up': {
+					from: { opacity: 0, transform: 'translateY(10px)' },
+					to: { opacity: 1, transform: 'translateY(0)' },
+				},
+				'scale-in': {
+					from: { opacity: 0, transform: 'scale(0.98)' },
+					to: { opacity: 1, transform: 'scale(1)' },
+				},
 				'accordion-down': {
 					from: { height: 0 },
 					to: { height: 'var(--radix-accordion-content-height)' },
@@ -67,6 +83,9 @@ module.exports = {
 				},
 			},
 			animation: {
+				'fade-in': 'fade-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both',
+				'fade-up': 'fade-up 320ms cubic-bezier(0.16, 1, 0.3, 1) both',
+				'scale-in': 'scale-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both',
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 			},
