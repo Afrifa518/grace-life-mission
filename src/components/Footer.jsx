@@ -15,6 +15,7 @@ import {
   Calendar
 } from 'lucide-react';
 import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
+import logo from '../../GMI-LOGOpp.png'
 
 const Footer = () => {
   const { images } = useSiteConfigContext();
@@ -29,16 +30,14 @@ const Footer = () => {
   const ministries = [
     { name: 'Youth Ministry', path: '/ministries' },
     { name: 'Women Ministry', path: '/ministries' },
-    { name: 'Men Ministry', path: '/ministries' },
-    { name: 'Children Ministry', path: '/ministries' },
-    { name: 'Outreach', path: '/ministries' },
+    { name: 'Children Ministry', path: '/ministries' }
   ];
 
   const socialLinks = [
     { icon: Facebook, href: '#', label: 'Facebook' },
     { icon: Instagram, href: '#', label: 'Instagram' },
     { icon: Youtube, href: '#', label: 'YouTube' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
+    { icon: Twitter, href: '#', label: 'X' },
   ];
 
   return (
@@ -56,7 +55,8 @@ const Footer = () => {
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-gradient-to-br from-primary to-amber-700 rounded-xl flex items-center justify-center shadow-sm shadow-black/20">
-                <span className="text-white font-bold text-xl">G</span>
+                {/* <span className="text-white font-bold text-xl">G</span> */}
+                <img src={logo} alt="GraceLife Mission Logo" className="h-10 w-auto object-contain" />
               </div>
               <div>
                 <span className="font-display font-bold text-xl">GraceLife Mission</span>

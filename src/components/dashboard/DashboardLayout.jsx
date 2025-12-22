@@ -14,6 +14,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import logo from '../../../GMI-LOGOpp.png'
 
 const DashboardLayout = ({ children }) => {
   const location = useLocation();
@@ -53,9 +54,9 @@ const DashboardLayout = ({ children }) => {
     <>
       <div className="p-6 border-b border-border/60">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-black/30">
-            <span className="text-white font-bold text-lg">G</span>
-          </div>
+          {/* <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-black/30"> */}
+            <img src={logo} alt="GraceLife Mission Logo" className="h-10 w-auto object-contain" />
+          {/* </div> */}
           <div className="min-w-0">
             <h2 className="font-display font-bold text-lg text-foreground leading-tight">Media Dashboard</h2>
             <p className="text-xs text-muted-foreground truncate">GraceLife Mission International</p>
