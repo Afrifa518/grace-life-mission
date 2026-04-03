@@ -72,25 +72,25 @@ const ContactInfoGrid = () => {
         icon: MapPin,
         title: 'Visit Us',
         details: addressDetails,
-        color: 'from-primary to-amber-700',
+        color: 'bg-primary',
       },
       {
         icon: Phone,
         title: 'Call Us',
         details: phoneDetails.length ? phoneDetails : ['—'],
-        color: 'from-emerald-700 to-emerald-500',
+        color: 'bg-primary',
       },
       {
         icon: Mail,
         title: 'Email Us',
         details: emailDetails.length ? emailDetails : ['—'],
-        color: 'from-amber-700 to-amber-500',
+        color: 'bg-gold',
       },
       {
         icon: MessageSquare,
         title: 'WhatsApp',
         details: whatsappDetails,
-        color: 'from-primary to-emerald-600',
+        color: 'bg-primary',
       },
     ];
   }, [churchInfo]);
@@ -111,7 +111,7 @@ const ContactInfoGrid = () => {
           viewport={{ once: true }}
           className="text-center group"
         >
-          <div className={`w-20 h-20 bg-gradient-to-br ${info.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+          <div className={`w-20 h-20 ${info.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
             <info.icon className="w-10 h-10 text-white" />
           </div>
           <h3 className="text-xl font-semibold text-foreground mb-3">{info.title}</h3>

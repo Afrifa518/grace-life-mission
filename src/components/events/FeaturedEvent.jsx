@@ -27,7 +27,7 @@ const FeaturedEvent = ({ event, onRSVP }) => {
                   <div className="space-y-2">
                     {event.schedule.map((s, i) => (
                       <div key={i} className="flex items-center space-x-3">
-                        <Calendar className="w-5 h-5 text-amber-700" />
+                        <Calendar className="w-5 h-5 text-gold" />
                         <span>{s.date ? new Date(s.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '—'}{s.time ? ` · ${s.time}` : ''}</span>
                       </div>
                     ))}
@@ -35,7 +35,7 @@ const FeaturedEvent = ({ event, onRSVP }) => {
                 ) : (
                   <>
                     <div className="flex items-center space-x-3">
-                      <Calendar className="w-5 h-5 text-amber-700" />
+                      <Calendar className="w-5 h-5 text-gold" />
                       <span>{new Date(event.date).toLocaleDateString('en-US', { 
                         weekday: 'long', 
                         year: 'numeric', 
@@ -44,13 +44,13 @@ const FeaturedEvent = ({ event, onRSVP }) => {
                       })}</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Clock className="w-5 h-5 text-amber-700" />
+                      <Clock className="w-5 h-5 text-gold" />
                       <span>{event.time}</span>
                     </div>
                   </>
                 )}
                 <div className="flex items-center space-x-3">
-                  <MapPin className="w-5 h-5 text-amber-700" />
+                  <MapPin className="w-5 h-5 text-gold" />
                   <span>{event.location}</span>
                 </div>
               </div>

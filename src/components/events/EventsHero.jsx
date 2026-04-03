@@ -5,7 +5,7 @@ import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 const EventsHero = () => {
   const { images } = useSiteConfigContext();
   return (
-    <section className="relative py-32 hero-gradient text-white overflow-hidden">
+    <section className="relative py-32 bg-primary text-white overflow-hidden">
       <div className="absolute inset-0">
         <img  
           className="w-full h-full object-cover opacity-20" 

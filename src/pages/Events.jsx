@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useToast } from '@/components/ui/use-toast';
 import EventsHero from '@/components/events/EventsHero';
 import EventsFilter from '@/components/events/EventsFilter';
@@ -89,16 +89,16 @@ const Events = () => {
 
   const getCategoryColor = (category) => {
     const colors = {
-      'Worship': 'from-primary to-amber-700',
-      'Youth': 'from-emerald-700 to-emerald-500',
-      'Bible Study': 'from-amber-700 to-amber-500',
-      'Fellowship': 'from-amber-600 to-primary',
-      'Outreach': 'from-primary to-emerald-600',
-      'Special': 'from-emerald-800 to-amber-600',
-      'Prayer': 'from-primary to-emerald-700',
-      'Seminar': 'from-amber-800 to-primary'
+      'Worship': 'bg-primary',
+      'Youth': 'bg-emerald-700',
+      'Bible Study': 'bg-gold',
+      'Fellowship': 'bg-primary',
+      'Outreach': 'bg-emerald-700',
+      'Special': 'bg-gold',
+      'Prayer': 'bg-primary',
+      'Seminar': 'bg-primary'
     };
-    return colors[category] || 'from-emerald-800 to-amber-700';
+    return colors[category] || 'bg-primary';
   };
 
   return (

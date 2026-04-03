@@ -32,7 +32,7 @@ const GalleryGrid = ({ items, onImageClick }) => {
             className="group cursor-pointer"
             onClick={() => onImageClick(item)}
           >
-            <div className="relative overflow-hidden rounded-2xl shadow-sm border border-border hover:shadow-md transition-all duration-300 card-hover">
+            <div className="relative overflow-hidden rounded-2xl shadow-sm border border-border hover:shadow-md transition-all duration-300 card-3d">
               <div className="relative h-64">
                 <img  
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
@@ -42,7 +42,7 @@ const GalleryGrid = ({ items, onImageClick }) => {
 
                 <div className="absolute top-4 right-4">
                   {isVideo ? (
-                    <div className="w-8 h-8 bg-amber-700 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-gold rounded-full flex items-center justify-center">
                       <Play className="w-4 h-4 text-white" />
                     </div>
                   ) : (
@@ -53,7 +53,7 @@ const GalleryGrid = ({ items, onImageClick }) => {
                 </div>
 
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-amber-200 transition-colors">
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-gold-light transition-colors">
                     {item.title}
                   </h3>
                   <div className="flex items-center space-x-4 text-sm text-white/80">

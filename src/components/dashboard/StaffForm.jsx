@@ -70,7 +70,7 @@ const StaffForm = ({ initialData, onCancel, onSaved }) => {
       };
 
       if (imageFile) {
-        const { publicUrl } = await uploadToStorage({ bucket: 'site', file: imageFile, folder: 'staff' });
+        const { publicUrl } = await uploadToStorage({ bucket: 'staff', file: imageFile, folder: 'photos' });
         payload.image_url = publicUrl;
       }
 

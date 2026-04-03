@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 const ContactForm = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,19 +25,26 @@ const ContactForm = () => {
       ...prev,
       [name]: value
     }));
+    // Clear error for this field when user types
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Please enter a valid email';
+    if (!formData.message.trim()) newErrors.message = 'Message is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.email || !formData.message) {
-      toast({
-        title: "Please fill in required fields",
-        description: "Name, email, and message are required to send your message.",
-        variant: "destructive"
-      });
-      return;
-    }
+
+    if (!validate()) return;
 
     if (!supabase) {
       toast({
@@ -75,6 +83,7 @@ const ContactForm = () => {
         message: '',
         visitReason: 'general'
       });
+      setErrors({});
     } catch (err) {
       toast({
         title: 'Send failed',
@@ -86,6 +95,16 @@ const ContactForm = () => {
     }
   };
 
+  const inputClass = (field) =>
+    `w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent transition-colors ${
+      errors[field] ? 'border-destructive bg-destructive/5' : 'border-border bg-background'
+    }`;
+
+  const inputClassPlain = (field) =>
+    `w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent transition-colors ${
+      errors[field] ? 'border-destructive bg-destructive/5' : 'border-border bg-background'
+    }`;
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -50 }}
@@ -95,58 +114,68 @@ const ContactForm = () => {
     >
       <div className="bg-card rounded-2xl shadow-sm border border-border p-8">
         <h3 className="text-2xl font-bold text-foreground mb-6">Send Us a Message</h3>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
+
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground/80 mb-2">Name *</label>
+              <label htmlFor="contact-name" className="block text-sm font-medium text-foreground/80 mb-2">Name *</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" aria-hidden="true" />
                 <input
+                  id="contact-name"
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-border bg-background rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+                  className={inputClass('name')}
                   placeholder="Your full name"
-                  required
+                  aria-required="true"
+                  aria-invalid={!!errors.name}
+                  aria-describedby={errors.name ? 'contact-name-error' : undefined}
                 />
               </div>
+              {errors.name && <p id="contact-name-error" className="text-destructive text-sm mt-1">{errors.name}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground/80 mb-2">Email *</label>
+              <label htmlFor="contact-email" className="block text-sm font-medium text-foreground/80 mb-2">Email *</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" aria-hidden="true" />
                 <input
+                  id="contact-email"
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-border bg-background rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+                  className={inputClass('email')}
                   placeholder="your.email@example.com"
-                  required
+                  aria-required="true"
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? 'contact-email-error' : undefined}
                 />
               </div>
+              {errors.email && <p id="contact-email-error" className="text-destructive text-sm mt-1">{errors.email}</p>}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground/80 mb-2">Phone</label>
+              <label htmlFor="contact-phone" className="block text-sm font-medium text-foreground/80 mb-2">Phone</label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" aria-hidden="true" />
                 <input
+                  id="contact-phone"
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-border bg-background rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+                  className={inputClass('phone')}
                   placeholder="(555) 123-4567"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground/80 mb-2">Reason for Contact</label>
+              <label htmlFor="contact-reason" className="block text-sm font-medium text-foreground/80 mb-2">Reason for Contact</label>
               <select
+                id="contact-reason"
                 name="visitReason"
                 value={formData.visitReason}
                 onChange={handleInputChange}
@@ -159,29 +188,34 @@ const ContactForm = () => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground/80 mb-2">Subject</label>
+            <label htmlFor="contact-subject" className="block text-sm font-medium text-foreground/80 mb-2">Subject</label>
             <input
+              id="contact-subject"
               type="text"
               name="subject"
               value={formData.subject}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-border bg-background rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+              className={inputClassPlain('subject')}
               placeholder="Brief subject line"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground/80 mb-2">Message *</label>
+            <label htmlFor="contact-message" className="block text-sm font-medium text-foreground/80 mb-2">Message *</label>
             <textarea
+              id="contact-message"
               name="message"
               value={formData.message}
               onChange={handleInputChange}
               rows={6}
-              className="w-full px-4 py-3 border border-border bg-background rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+              className={inputClassPlain('message')}
               placeholder="Tell us how we can help you..."
-              required
+              aria-required="true"
+              aria-invalid={!!errors.message}
+              aria-describedby={errors.message ? 'contact-message-error' : undefined}
             ></textarea>
+            {errors.message && <p id="contact-message-error" className="text-destructive text-sm mt-1">{errors.message}</p>}
           </div>
-          <Button 
+          <Button
             type="submit"
             disabled={loading}
             className="w-full rounded-full py-3"

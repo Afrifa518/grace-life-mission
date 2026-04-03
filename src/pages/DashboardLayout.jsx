@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardOverview from '@/pages/dashboard/DashboardOverview';
 import SermonsManagement from '@/pages/dashboard/SermonsManagement';

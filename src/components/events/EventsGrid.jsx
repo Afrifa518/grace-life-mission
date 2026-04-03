@@ -15,7 +15,7 @@ const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
-            Upcoming <span className="gradient-text">Events</span>
+            Upcoming <span className="text-gold">Events</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Mark your calendar and join us for these exciting upcoming events and gatherings.
@@ -30,7 +30,7 @@ const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-all duration-300 card-hover"
+              className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-all duration-300 card-3d"
             >
               <div className="relative h-48">
                 <img  
@@ -38,7 +38,7 @@ const EventsGrid = ({ events, onRSVP, getCategoryColor }) => {
                   alt={event.title}
                   src={event.imageUrl || '/sunday.jpeg'} />
                 <div className="absolute top-4 left-4">
-                  <span className={`bg-gradient-to-r ${getCategoryColor(event.category)} text-white px-3 py-1 rounded-full text-xs font-medium`}>
+                  <span className={`${getCategoryColor(event.category)} text-white px-3 py-1 rounded-full text-xs font-medium`}>
                     {event.category}
                   </span>
                 </div>

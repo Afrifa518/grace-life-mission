@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const EventsFilter = ({ categories, selectedCategory, setSelectedCategory }) => {
   return (
-    <section className="py-12 section-gradient">
+    <section className="py-12 bg-muted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

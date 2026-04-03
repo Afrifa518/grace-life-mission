@@ -14,7 +14,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import logo from '../../../GMI-LOGOpp.png'
+const logo = '/GMI-LOGOpp.png';
 
 const DashboardLayout = ({ children }) => {
   const location = useLocation();

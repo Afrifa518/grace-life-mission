@@ -99,7 +99,7 @@ const MapAndHours = () => {
 
       <div className="bg-card rounded-2xl shadow-sm border border-border p-8">
         <div className="flex items-center mb-6">
-          <Clock className="w-6 h-6 text-amber-700 mr-3" />
+          <Clock className="w-6 h-6 text-gold mr-3" />
           <h3 className="text-xl font-bold text-foreground">Service Times & Hours</h3>
         </div>
         <div className="space-y-4">

@@ -10,7 +10,7 @@ const defaultMinistry = {
   leader: '',
   meetingTime: '',
   description: '',
-  color: 'from-blue-600 to-purple-600',
+  color: 'bg-primary',
   status: 'published',
   order: 0,
   features: '', // comma-separated string
@@ -32,7 +32,7 @@ const MinistryForm = ({ initialData, onCancel, onSaved }) => {
         leader: initialData.leader || '',
         meetingTime: initialData.meetingTime || '',
         description: initialData.description || '',
-        color: initialData.color || 'from-blue-600 to-purple-600',
+        color: initialData.color || 'bg-primary',
         status: initialData.status || 'published',
         order: initialData.order || 0,
         features: Array.isArray(initialData.features) ? initialData.features.join(', ') : (initialData.features || ''),
@@ -105,7 +105,7 @@ const MinistryForm = ({ initialData, onCancel, onSaved }) => {
         </div>
         <div>
           <label className="block text-sm font-medium text-foreground/80 mb-2">Color Gradient (Tailwind)</label>
-          <input name="color" value={form.color} onChange={updateField} placeholder="from-blue-600 to-purple-600" className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
+          <input name="color" value={form.color} onChange={updateField} placeholder="bg-primary" className="w-full px-4 py-3 border border-input/80 bg-background/60 text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-2 focus:ring-ring focus:border-transparent" />
         </div>
         <div>
           <label className="block text-sm font-medium text-foreground/80 mb-2">Status</label>

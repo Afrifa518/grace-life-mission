@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Toaster } from '@/components/ui/toaster';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -23,8 +23,8 @@ const AppContent = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>GraceLife Mission International - Making Diciples Of Christ</title>
-        <meta name="description" content="Join GraceLife Mission International, a Christ-centered church focused on making deciples of the Christ and building a strong faith community. Experience worship, fellowship, and spiritual growth." />
+        <title>GraceLife Mission International - Making Disciples Of Christ</title>
+        <meta name="description" content="Join GraceLife Mission International, a Christ-centered church focused on making disciples of the Christ and building a strong faith community. Experience worship, fellowship, and spiritual growth." />
       </Helmet>
       
       {!isDashboard && <Navbar />}

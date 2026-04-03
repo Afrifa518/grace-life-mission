@@ -9,13 +9,10 @@ import {
   Facebook, 
   Instagram, 
   Youtube, 
-  Twitter,
-  Heart,
-  Clock,
-  Calendar
+  Clock
 } from 'lucide-react';
 import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
-import logo from '../../GMI-LOGOpp.png'
+const logo = '/GMI-LOGOpp.png';
 
 const Footer = () => {
   const { images } = useSiteConfigContext();
@@ -53,7 +50,7 @@ const Footer = () => {
           {/* Church Info */}
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-amber-700 rounded-xl flex items-center justify-center shadow-sm shadow-black/20">
+              <div className="icon-box w-12 h-12">
                 {/* <span className="text-white font-bold text-xl">G</span> */}
                 <img src={logo} alt="GraceLife Mission Logo" className="h-10 w-auto object-contain" />
               </div>
@@ -91,7 +88,7 @@ const Footer = () => {
                     to={link.path}
                     className="text-background/80 hover:text-background transition-colors duration-200 flex items-center group"
                   >
-                    <span className="w-2 h-2 bg-amber-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                    <span className="w-2 h-2 bg-gold rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                     {link.name}
                   </Link>
                 </li>
@@ -122,24 +119,24 @@ const Footer = () => {
             <span className="font-semibold text-lg mb-6 block">Contact Info</span>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-amber-600 mt-1 flex-shrink-0" />
+                <MapPin className="w-5 h-5 text-gold mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-background/80">Pomakrom, Oppsite VRA Quaters</p>
+                  <p className="text-background/80">Pomakrom, Opposite VRA Quarters</p>
                   <p className="text-background/80">Techiman BE, Ghana</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <Phone className="w-5 h-5 text-gold flex-shrink-0" />
                 <p className="text-background/80">+233505983499</p>
                 <p className="text-background/80">+233244892719</p>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <Mail className="w-5 h-5 text-gold flex-shrink-0" />
                 <p className="text-background/80">info@gracelifemission.org</p>
               </div>
               <div className="mt-6 p-4 bg-white/10 rounded-xl border border-white/10">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Clock className="w-4 h-4 text-amber-600" />
+                  <Clock className="w-4 h-4 text-gold" />
                   <span className="font-medium text-sm">Service Times</span>
                 </div>
                 <p className="text-sm text-background/80">Sunday: 8:00 AM & 11:00 AM</p>
@@ -155,7 +152,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-background/60 text-sm text-center md:text-left">
-              © 2025 GraceLife Mission International. All rights reserved.
+              © {new Date().getFullYear()} GraceLife Mission International. All rights reserved.
             </p>
             <div className="flex items-center space-x-1 text-sm text-background/60">
               <span>Built By</span>

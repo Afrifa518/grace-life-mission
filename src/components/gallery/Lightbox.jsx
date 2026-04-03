@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -20,6 +20,34 @@ const Lightbox = ({ selectedImage, onClose, onNavigate }) => {
   const ytId = isVideo ? getYouTubeId(selectedImage.youtubeUrl) : '';
   const embed = isVideo && ytId ? `https://www.youtube.com/embed/${ytId}` : '';
 
+  // Keyboard navigation
+  const handleKeyDown = useCallback((e) => {
+    switch (e.key) {
+      case 'Escape':
+        onClose();
+        break;
+      case 'ArrowLeft':
+        onNavigate('prev');
+        break;
+      case 'ArrowRight':
+        onNavigate('next');
+        break;
+      default:
+        break;
+    }
+  }, [onClose, onNavigate]);
+
+  useEffect(() => {
+    if (!selectedImage) return;
+    document.addEventListener('keydown', handleKeyDown);
+    // Lock scroll while lightbox is open
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [selectedImage, handleKeyDown]);
+
   return (
     <AnimatePresence>
       {selectedImage && (
@@ -29,6 +57,9 @@ const Lightbox = ({ selectedImage, onClose, onNavigate }) => {
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
           onClick={onClose}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Gallery viewer: ${selectedImage.title}`}
         >
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -40,20 +71,23 @@ const Lightbox = ({ selectedImage, onClose, onNavigate }) => {
             <button
               onClick={onClose}
               className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+              aria-label="Close gallery viewer"
             >
               <X className="w-6 h-6" />
             </button>
-            
+
             <button
               onClick={() => onNavigate('prev')}
               className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+              aria-label="Previous image"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
-            
+
             <button
               onClick={() => onNavigate('next')}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+              aria-label="Next image"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -70,10 +104,11 @@ const Lightbox = ({ selectedImage, onClose, onNavigate }) => {
                     allowFullScreen
                   />
                 ) : (
-                  <img  
-                    className="w-full h-full object-cover" 
+                  <img
+                    className="w-full h-full object-cover"
                     alt={selectedImage.title}
-                    src={selectedImage.imageUrl || '/sunday.jpeg'} />
+                    src={selectedImage.imageUrl || '/sunday.jpeg'}
+                  />
                 )}
               </div>
               <div className="p-8">

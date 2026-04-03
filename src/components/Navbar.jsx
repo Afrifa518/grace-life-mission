@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import logo from '../../GMI-LOGOpp.png'
+const logo = '/GMI-LOGOpp.png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,11 +12,29 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Adjust 80 to the scroll position where your background becomes white
       setIsOnWhiteBackground(window.scrollY > 80);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  // Scroll lock when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  const toggleMenu = useCallback(() => {
+    setIsOpen(prev => !prev);
   }, []);
 
   const navItems = [
@@ -35,6 +53,7 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 140, damping: 18 }}
       className="fixed left-0 right-0 top-4 z-50 px-4"
+      aria-label="Main navigation"
     >
       <div
         className={`relative mx-auto w-full max-w-7xl rounded-full border shadow-lg shadow-black/10 backdrop-blur-xl transition-all duration-300 ${
@@ -61,6 +80,7 @@ const Navbar = () => {
                     ? 'text-foreground underline underline-offset-8'
                     : 'text-foreground/70 hover:text-foreground'
                 }`}
+                aria-current={location.pathname === item.path ? 'page' : undefined}
               >
                 {item.name}
               </Link>
@@ -76,7 +96,15 @@ const Navbar = () => {
           </div>
           {/* Mobile menu button */}
           <div className="md:hidden flex-shrink-0 ml-auto">
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)} className="text-foreground">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMenu}
+              className="text-foreground"
+              aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-navigation"
+            >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </Button>
           </div>
@@ -85,6 +113,8 @@ const Navbar = () => {
         <AnimatePresence>
           {isOpen && (
             <motion.div
+              id="mobile-navigation"
+              role="menu"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -94,12 +124,14 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   to={item.path}
+                  role="menuitem"
                   onClick={() => setIsOpen(false)}
                   className={`text-base font-semibold transition-colors duration-200 px-3 py-2 rounded-xl ${
                     location.pathname === item.path
                       ? 'bg-accent/50 text-foreground'
                       : 'text-foreground/80 hover:bg-accent/40 hover:text-foreground'
                   }`}
+                  aria-current={location.pathname === item.path ? 'page' : undefined}
                 >
                   {item.name}
                 </Link>

@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
-import { Play, Download, Calendar, Clock, User, Search, Filter } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
+import { Play, Calendar, Clock, User, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
@@ -69,7 +69,7 @@ const Sermons = () => {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative py-32 hero-gradient text-white overflow-hidden">
+      <section className="relative py-32 bg-primary text-white overflow-hidden">
         <div className="absolute inset-0">
           <img  
             className="w-full h-full object-cover opacity-20" 
@@ -95,7 +95,7 @@ const Sermons = () => {
       </section>
 
       {/* Search and Filter */}
-      <section className="py-12 section-gradient">
+      <section className="py-12 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -112,6 +112,7 @@ const Sermons = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-border bg-background rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+                aria-label="Search sermons"
               />
             </div>
           </motion.div>
@@ -187,7 +188,7 @@ const Sermons = () => {
       </section>
 
       {/* Sermon Library */}
-      <section className="py-20 section-gradient">
+      <section className="py-20 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Loading */}
           {loading && (
@@ -206,7 +207,7 @@ const Sermons = () => {
                 className="text-center mb-16"
               >
                 <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
-                  Sermon <span className="gradient-text">Library</span>
+                  Sermon <span className="text-gold">Library</span>
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   Explore our collection of inspiring messages that will strengthen your faith and deepen your relationship with God.
@@ -226,7 +227,7 @@ const Sermons = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: index * 0.1 }}
                       viewport={{ once: true }}
-                      className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-all duration-300 card-hover"
+                      className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-all duration-300 card-3d"
                     >
                       <div className="relative h-48">
                         <img  

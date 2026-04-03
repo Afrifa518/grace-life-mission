@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import GalleryGrid from '@/components/gallery/GalleryGrid';
 import Lightbox from '@/components/gallery/Lightbox';
@@ -55,7 +55,7 @@ const Gallery = () => {
         <meta name="description" content="Explore photos and stories from GraceLife Mission International. See our worship services, community events, outreach programs, and inspiring testimonies." />
       </Helmet>
 
-      <section className="relative py-32 hero-gradient text-white overflow-hidden">
+      <section className="relative py-32 bg-primary text-white overflow-hidden">
         <div className="absolute inset-0">
           <img  
             className="w-full h-full object-cover opacity-20" 
@@ -87,7 +87,7 @@ const Gallery = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
-              Moments of <span className="gradient-text">Grace</span>
+              Moments of <span className="text-gold">Grace</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Every picture tells a story of God's faithfulness and the love shared within our church community.
@@ -117,7 +117,7 @@ const Gallery = () => {
       
       <Lightbox selectedImage={selectedImage} onClose={closeLightbox} onNavigate={navigateImage} />
 
-      <section className="py-20 hero-gradient text-white">
+      <section className="py-20 bg-primary text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

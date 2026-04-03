@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import ContactInfoGrid from '@/components/contact/ContactInfoGrid';
 import ContactForm from '@/components/contact/ContactForm';
@@ -17,7 +17,7 @@ const Contact = () => {
         <meta name="description" content="Get in touch with GraceLife Mission International. Find our location, contact information, service times, and send us a message. We'd love to hear from you!" />
       </Helmet>
 
-      <section className="relative py-32 hero-gradient text-white overflow-hidden">
+      <section className="relative py-32 bg-primary text-white overflow-hidden">
         <div className="absolute inset-0">
           <img 
             className="w-full h-full object-cover opacity-20" 
@@ -49,7 +49,7 @@ const Contact = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
-              Contact <span className="gradient-text">Information</span>
+              Contact <span className="text-gold">Information</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Multiple ways to connect with our church family and get the information you need.
@@ -59,7 +59,7 @@ const Contact = () => {
         </div>
       </section>
 
-      <section className="py-20 section-gradient">
+      <section className="py-20 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <ContactForm />
@@ -78,7 +78,7 @@ const Contact = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
-              Who to <span className="gradient-text">Contact</span>
+              Who to <span className="text-gold">Contact</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Connect with the right person for your specific needs and questions.
@@ -88,7 +88,7 @@ const Contact = () => {
         </div>
       </section>
 
-      <section className="py-20 hero-gradient text-white">
+      <section className="py-20 bg-primary text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

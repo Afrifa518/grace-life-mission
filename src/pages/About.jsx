@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
-import { Heart, Target, Eye, Users, Award, Globe } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
+import { Heart, Target, Eye, Users } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useSiteConfigContext } from '@/contexts/SiteConfigContext';
 
@@ -47,11 +47,12 @@ const About = () => {
         <meta name="description" content="Learn about GraceLife Mission International—our mission, vision, and values as a Christ-centered community dedicated to worship, discipleship, and outreach." />
       </Helmet>
 
-      <section className="relative py-32 hero-gradient text-white overflow-hidden">
+      <section className="relative py-32 bg-primary text-white overflow-hidden">
         <div className="absolute inset-0">
-          <img  
-            className="w-full h-full object-cover opacity-20" 
+          <img
+            className="w-full h-full object-cover opacity-20"
             alt="Church building and congregation worshipping"
+            loading="lazy"
            src={images?.aboutHeroUrl || '/sunday.jpeg'} />
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,7 +72,7 @@ const About = () => {
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">We make disciples of Christ through a life of grace by:</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { title: 'Missionary Work', desc: 'Training and equipping believers to witness to the grace of God in all nations.' },
               { title: 'Discipleship Training', desc: 'Establishing organized systems to raise disciples of Jesus Christ.' },
@@ -87,14 +88,14 @@ const About = () => {
         </div>
       </section>
 
-      <section className="py-20 section-gradient">
+      <section className="py-20 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">Core Values</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">These biblical convictions shape our life and ministry.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { title: 'Christlikeness', desc: 'Christ formed in us by grace (Galatians 2:20).' },
               { title: 'Soul Winning', desc: 'Obeying the Great Commission (Matthew 28:18).' },
@@ -116,10 +117,10 @@ const About = () => {
         </div>
       </section>
 
-      <section className="py-20 section-gradient">
+      <section className="py-20 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">Our <span className="gradient-text">Leadership</span></h2>
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">Our <span className="text-gold">Leadership</span></h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Meet the dedicated leaders who guide our church with wisdom, compassion, and unwavering faith.</p>
           </motion.div>
 
@@ -128,11 +129,11 @@ const About = () => {
               <p className="text-muted-foreground">Loading leadership...</p>
             </motion.div>
           ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {leaders.map((leader, index) => (
-              <motion.div key={leader.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: index * 0.1 }} viewport={{ once: true }} className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-all duration-300 card-hover">
+              <motion.div key={leader.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: index * 0.1 }} viewport={{ once: true }} className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-all duration-300 card-3d">
               <div className="relative h-64">
-                <img className="w-full h-full object-cover" alt={`${leader.name} - ${leader.role}`} src={leader.imageUrl || '/sunday.jpeg'} />
+                <img className="w-full h-full object-cover" alt={`${leader.name} - ${leader.role}`} loading="lazy" src={leader.imageUrl || '/sunday.jpeg'} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
               </div>
               <div className="p-6">

@@ -153,7 +153,7 @@ insert into storage.buckets (id, name, public)
 values ('staff', 'staff', true)
 on conflict (id) do nothing;
 
-alter table storage.objects enable row level security;
+-- Do not ALTER storage.objects (see 20251221000000_initial_schema.sql).
 
 do $$
 begin

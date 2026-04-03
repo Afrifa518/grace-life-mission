@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Users, Heart, BookOpen, Star, Baby, Music, HeartHandshake as Handshake, Globe, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -81,7 +81,7 @@ const Ministries = () => {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative py-32 hero-gradient text-white overflow-hidden">
+      <section className="relative py-32 bg-primary text-white overflow-hidden">
         <div className="absolute inset-0">
           <img  
             className="w-full h-full object-cover opacity-20" 
@@ -117,7 +117,7 @@ const Ministries = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
-              Find Your <span className="gradient-text">Calling</span>
+              Find Your <span className="text-gold">Calling</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Our ministries are the hands and feet of GraceLife—equipping disciples through contact group systems, practical helps, outreach, and Spirit-led service.
@@ -127,7 +127,7 @@ const Ministries = () => {
       </section>
 
       {/* Ministry Cards */}
-      <section className="py-20 section-gradient">
+      <section className="py-20 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
@@ -146,7 +146,7 @@ const Ministries = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: (index % 2) * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-all duration-300 card-hover"
+                  className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-all duration-300 card-3d"
                 >
                   <div className="relative h-64">
                     <img  
@@ -155,7 +155,7 @@ const Ministries = () => {
                      src={ministry.imageUrl || '/sunday.jpeg'} />
                     <div className="absolute inset-0 bg-black/20"></div>
                     <div className="absolute top-6 left-6">
-                      <div className={`w-16 h-16 bg-gradient-to-br ${ministry.color || 'from-primary to-amber-700'} rounded-2xl flex items-center justify-center shadow-sm shadow-black/15`}>
+                      <div className={`w-16 h-16 ${ministry.color || 'bg-primary'} rounded-2xl flex items-center justify-center shadow-sm shadow-black/15`}>
                         <Users className="w-8 h-8 text-white" />
                       </div>
                     </div>
@@ -177,7 +177,7 @@ const Ministries = () => {
                           <ul className="space-y-1">
                             {ministry.features.slice(0, 3).map((feature, idx) => (
                               <li key={idx} className="text-sm text-muted-foreground flex items-center">
-                                <div className="w-1.5 h-1.5 bg-amber-600 rounded-full mr-3"></div>
+                                <div className="w-1.5 h-1.5 bg-gold rounded-full mr-3"></div>
                                 {feature}
                               </li>
                             ))}
@@ -223,7 +223,7 @@ const Ministries = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6">
-              Ministry <span className="gradient-text">Leadership</span>
+              Ministry <span className="text-gold">Leadership</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Our dedicated ministry leaders are here to guide, support, and help you discover your place in God's kingdom.
@@ -266,7 +266,7 @@ const Ministries = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 hero-gradient text-white">
+      <section className="py-20 bg-primary text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
